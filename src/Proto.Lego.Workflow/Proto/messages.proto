@@ -1,0 +1,16 @@
+﻿syntax = "proto3";
+package Proto.Lego.Workflow.Messages;
+option csharp_namespace = "Proto.Lego.Workflow.Messages";
+
+import "google/protobuf/any.proto";
+
+message Trigger {
+
+}
+
+//State
+
+message WorkflowStateWrapper {
+	bool completed = 1;
+	google.protobuf.Any inner_state = 2;
+}
