@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
+using Microsoft.Extensions.Logging;
 using Proto.Cluster;
 using Proto.Lego.Aggregate.Messages;
 using Proto.Lego.Aggregate.Persistence;
@@ -9,6 +10,7 @@ namespace Proto.Lego.Aggregate;
 public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
 {
     private readonly IAggregateStateStore _stateStore;
+    private readonly ILogger<Aggregate<TState>> _logger;
 
     protected string? Kind;
     protected string? Id;
@@ -23,13 +25,15 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
 
     private bool _hasPersistedState;
 
-    protected Aggregate(IAggregateStateStore stateStore)
+    protected Aggregate(IAggregateStateStore stateStore, ILogger<Aggregate<TState>> logger)
     {
         _stateStore = stateStore;
+        _logger = logger;
     }
 
     public async Task ReceiveAsync(IContext context)
     {
+        _logger.LogDebug("{self} received {message}", Key, context.Message);
         _context = context;
 
         switch (context.Message)
@@ -40,7 +44,11 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
                 break;
 
             case Operation operation:
-                await HandleOperation(operation);
+                await HandleOperationAsync(operation);
+                break;
+
+            case WipeWorkflowState wipeWorkflowState:
+                await HandleWipeWorkflowState(wipeWorkflowState);
                 break;
         }
     }
@@ -57,16 +65,22 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
 
     private async Task RecoverStateAsync()
     {
+        _logger.LogDebug("{self} entered RecoverStateAsync", Key);
+
         var bytes = await _stateStore.GetAsync(Key);
         if (bytes != null)
         {
             _hasPersistedState = true;
             State = DeserializeState(bytes);
         }
+
+        _logger.LogDebug("{self} exited RecoverStateAsync", Key);
     }
 
     protected async Task PersistStateAsync()
     {
+        _logger.LogDebug("{self} entered PersistStateAsync", Key);
+
         var bytes = SerializeState();
 
         if (_hasPersistedState)
@@ -78,6 +92,8 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
             await _stateStore.PutAsync(Key, bytes);
             _hasPersistedState = true;
         }
+
+        _logger.LogDebug("{self} exited PersistStateAsync", Key);
     }
 
     protected virtual byte[] SerializeState()
@@ -90,8 +106,10 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
         return AggregateStateWrapper.Parser.ParseFrom(bytes);
     }
 
-    private async Task HandleOperation(Operation operation)
+    private async Task HandleOperationAsync(Operation operation)
     {
+        _logger.LogDebug("{self} entered HandleOperationAsync", Key);
+
         var workflowState = GetOrCreateWorkflowState(operation.WorkflowId);
 
         if (operation.Sequence - workflowState.Sequence > 1)
@@ -136,10 +154,14 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
         workflowState.Responses.Add(operation.Sequence, response);
         await PersistStateAsync();
         Reply(response);
+
+        _logger.LogDebug("{self} exited HandleOperationAsync", Key);
     }
 
     private OperationResponse HandlePrepare(string workflowId, Any action)
     {
+        _logger.LogDebug("{self} entered HandlePrepare", Key);
+
         var response = Prepare(action);
 
         if (response.Success)
@@ -148,16 +170,22 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
             workflowState.PreparedActions.Add(action);
         }
 
+        _logger.LogDebug("{self} exited HandlePrepare", Key);
+
         return response;
     }
 
     private OperationResponse HandleConfirm(string workflowId, Any action)
     {
+        _logger.LogDebug("{self} entered HandleConfirm", Key);
+
         var workflowState = GetOrCreateWorkflowState(workflowId);
         var preparedAction = workflowState.PreparedActions.FirstOrDefault(x => x.Equals(action));
 
         if (preparedAction == null)
         {
+            _logger.LogError("{self}: {action} for {workflowId} was not prepared", Key, action, workflowId);
+
             return new OperationResponse
             {
                 Success = false,
@@ -168,16 +196,22 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
         var response = Confirm(action);
         workflowState.PreparedActions.Remove(action);
 
+        _logger.LogDebug("{self} exited HandleConfirm", Key);
+
         return response;
     }
 
     private OperationResponse HandleCancel(string workflowId, Any action)
     {
+        _logger.LogDebug("{self} entered HandleCancel", Key);
+
         var workflowState = GetOrCreateWorkflowState(workflowId);
         var preparedAction = workflowState.PreparedActions.FirstOrDefault(x => x.Equals(action));
 
         if (preparedAction == null)
         {
+            _logger.LogError("{self}: {action} for {workflowId} was not prepared", Key, action, workflowId);
+
             return new OperationResponse
             {
                 Success = false,
@@ -187,6 +221,8 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
 
         var response = Cancel(action);
         workflowState.PreparedActions.Remove(action);
+
+        _logger.LogDebug("{self} exited HandleCancel", Key);
 
         return response;
     }
@@ -237,5 +273,25 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
     private void Reply(OperationResponse response)
     {
         _context!.Send(_context.Sender!, response);
+    }
+
+    private void Reply(IMessage message)
+    {
+        _context!.Send(_context.Sender!, message);
+    }
+
+    private async Task HandleWipeWorkflowState(WipeWorkflowState wipeWorkflowState)
+    {
+        _logger.LogDebug("{self} entered HandleWipeWorkflowState", Key);
+
+        if (State.WorkflowStates.ContainsKey(wipeWorkflowState.WorkflowId))
+        {
+            State.WorkflowStates.Remove(wipeWorkflowState.WorkflowId);
+            await PersistStateAsync();
+        }
+
+        Reply(new Empty());
+
+        _logger.LogDebug("{self} exited HandleWipeWorkflowState", Key);
     }
 }

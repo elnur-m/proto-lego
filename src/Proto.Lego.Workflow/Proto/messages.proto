@@ -12,5 +12,6 @@ message Trigger {
 
 message WorkflowStateWrapper {
 	bool completed = 1;
-	google.protobuf.Any inner_state = 2;
+	repeated string aggregates_to_clean_up = 2;
+	google.protobuf.Any inner_state = 3;
 }

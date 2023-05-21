@@ -23,6 +23,10 @@ enum OPERATION_TYPE {
 	EXECUTE = 3;
 }
 
+message WipeWorkflowState {
+	string workflow_id = 1;
+}
+
 //State
 
 message AggregateStateWrapper {
