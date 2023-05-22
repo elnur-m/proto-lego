@@ -77,6 +77,7 @@ internal class Build : NukeBuild
     private Target PublishPackages => _ => _
         .DependsOn(PackAggregate)
         .DependsOn(PackWorkflow)
+        .Requires(() => NuGetApiKey)
         .Executes(() =>
         {
             var packagePaths = PackagesDirectory.GlobFiles($"*{Version}.nupkg");
