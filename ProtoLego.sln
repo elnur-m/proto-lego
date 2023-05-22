@@ -7,12 +7,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proto.Lego.Aggregate", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proto.Lego.Workflow", "src\Proto.Lego.Workflow\Proto.Lego.Workflow.csproj", "{E2D14CAA-9BF2-4631-8FBB-3B7338A53C7A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{D2453D27-A0D0-4067-A3A3-ABA52A741385}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D2453D27-A0D0-4067-A3A3-ABA52A741385}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2453D27-A0D0-4067-A3A3-ABA52A741385}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5582AEB6-271D-4E50-B572-98A55D3D7476}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5582AEB6-271D-4E50-B572-98A55D3D7476}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5582AEB6-271D-4E50-B572-98A55D3D7476}.Release|Any CPU.ActiveCfg = Release|Any CPU
