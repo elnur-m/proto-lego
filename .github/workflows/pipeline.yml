@@ -16,7 +16,10 @@
 
 name: pipeline
 
-on: [workflow_dispatch]
+on: [push]
+
+permissions:
+  actions: read
 
 jobs:
   ubuntu-latest:

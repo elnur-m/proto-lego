@@ -18,9 +18,10 @@ using static Nuke.Common.IO.PathConstruction;
 [GitHubActions(
     name: "pipeline",
     image: GitHubActionsImage.UbuntuLatest,
-    On = new[] { GitHubActionsTrigger.WorkflowDispatch },
+    On = new[] { GitHubActionsTrigger.Push },
     InvokedTargets = new[] { nameof(PublishPackages) },
-    ImportSecrets = new[] { nameof(NuGetApiKey) })]
+    ImportSecrets = new[] { nameof(NuGetApiKey) },
+    ReadPermissions = new[] { GitHubActionsPermissions.Actions })]
 internal class Build : NukeBuild
 {
     public static int Main() => Execute<Build>(x => x.PublishPackages);
