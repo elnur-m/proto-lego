@@ -16,7 +16,7 @@
 
 name: pipeline
 
-on: [push]
+on: [push, workflow_dispatch]
 
 jobs:
   ubuntu-latest:
