@@ -11,8 +11,12 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Proto.Actor" Version="1.1.0" />
-		<PackageReference Include="Proto.Cluster" Version="1.1.0" />
+		<PackageReference Include="Proto.Actor" Version="1.2.0" />
+		<PackageReference Include="Proto.Cluster" Version="1.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Proto.Lego.Persistence\Proto.Lego.Persistence.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

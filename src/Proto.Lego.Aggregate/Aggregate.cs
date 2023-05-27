@@ -3,13 +3,13 @@ using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Logging;
 using Proto.Cluster;
 using Proto.Lego.Aggregate.Messages;
-using Proto.Lego.Aggregate.Persistence;
+using Proto.Lego.Persistence;
 
 namespace Proto.Lego.Aggregate;
 
 public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
 {
-    private readonly IAggregateStateStore _stateStore;
+    private readonly IKeyValueStateStore _stateStore;
     private readonly ILogger<Aggregate<TState>> _logger;
 
     protected string? Kind;
@@ -25,7 +25,7 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
 
     private bool _hasPersistedState;
 
-    protected Aggregate(IAggregateStateStore stateStore, ILogger<Aggregate<TState>> logger)
+    protected Aggregate(IKeyValueStateStore stateStore, ILogger<Aggregate<TState>> logger)
     {
         _stateStore = stateStore;
         _logger = logger;

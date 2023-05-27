@@ -3,14 +3,14 @@ using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Logging;
 using Proto.Cluster;
 using Proto.Lego.Aggregate.Messages;
+using Proto.Lego.Persistence;
 using Proto.Lego.Workflow.Messages;
-using Proto.Lego.Workflow.Persistence;
 
 namespace Proto.Lego.Workflow;
 
 public abstract class Workflow<TState> : IActor where TState : IMessage, new()
 {
-    private readonly IWorkflowStateStore _stateStore;
+    private readonly IKeyValueStateStore _stateStore;
     private readonly IAliveWorkflowStore _aliveWorkflowStore;
     private readonly ILogger<Workflow<TState>> _logger;
 
@@ -27,7 +27,7 @@ public abstract class Workflow<TState> : IActor where TState : IMessage, new()
     private bool _isExecuting;
 
     protected Workflow(
-        IWorkflowStateStore stateStore,
+        IKeyValueStateStore stateStore,
         IAliveWorkflowStore aliveWorkflowStore,
         ILogger<Workflow<TState>> logger
     )

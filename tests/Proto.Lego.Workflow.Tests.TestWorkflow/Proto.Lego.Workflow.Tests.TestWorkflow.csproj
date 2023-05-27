@@ -11,17 +11,15 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Proto.Actor" Version="1.2.0" />
-		<PackageReference Include="Proto.Cluster" Version="1.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Proto.Lego.Aggregate\Proto.Lego.Aggregate.csproj" />
-	  <ProjectReference Include="..\Proto.Lego.Persistence\Proto.Lego.Persistence.csproj" />
+		<Protobuf Include="Proto/test_workflow.proto" GrpcServices="None" AdditionalImportDirs=".;" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="Proto/messages.proto" GrpcServices="None" AdditionalImportDirs=".;" />
+		<ProjectReference Include="..\..\src\Proto.Lego.Workflow\Proto.Lego.Workflow.csproj" />
+		<ProjectReference Include="..\Proto.Lego.Aggregate.Tests.TestAggregate\Proto.Lego.Aggregate.Tests.TestAggregate.csproj" />
 	</ItemGroup>
 
 </Project>

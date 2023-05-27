@@ -1,4 +1,4 @@
-﻿namespace Proto.Lego.Workflow.Persistence;
+﻿namespace Proto.Lego.Persistence;
 
 public interface IAliveWorkflowStore
 {

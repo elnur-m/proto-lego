@@ -200,15 +200,25 @@ window.addEventListener("load",function(){e.contentLoaded()},!1)}).call(e,n(9))}
 $(document).ready(function() {
   $("#Clean").addClass('highlight');
   $("#BuildProjects").addClass('highlight');
+  $("#RunInMemoryPersistenceTests").addClass('highlight');
+  $("#PackInMemoryPersistence").addClass('highlight');
+  $("#PackPersistence").addClass('highlight');
+  $("#RunWorkflowTests").addClass('highlight');
   $("#PackWorkflow").addClass('highlight');
+  $("#RunAggregateTests").addClass('highlight');
   $("#PackAggregate").addClass('highlight');
   $("#PublishPackages").addClass('highlight');
   $("#Clean").hover(
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
         $("#PackAggregate").removeClass('highlight');
         $("#PackWorkflow").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
         $("#Clean").addClass('highlight');
     },
@@ -216,7 +226,12 @@ $(document).ready(function() {
         $("#Clean").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
         $("#PackWorkflow").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
         $("#PackAggregate").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
@@ -224,8 +239,13 @@ $(document).ready(function() {
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
         $("#PackAggregate").removeClass('highlight');
         $("#PackWorkflow").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
@@ -235,7 +255,105 @@ $(document).ready(function() {
         $("#BuildProjects").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
         $("#PackWorkflow").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
+        $("#PackAggregate").addClass('highlight');
+        $("#PublishPackages").addClass('highlight');
+    });
+  $("#RunAggregateTests").hover(
+    function() {
+        $("#Clean").removeClass('highlight');
+        $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
+        $("#PackAggregate").removeClass('highlight');
+        $("#PackWorkflow").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
+        $("#PublishPackages").removeClass('highlight');
+        $("#Clean").addClass('highlight');
+        $("#BuildProjects").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
+    },
+    function() {
+        $("#Clean").removeClass('highlight');
+        $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
+        $("#Clean").addClass('highlight');
+        $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
+        $("#PackWorkflow").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
+        $("#PackAggregate").addClass('highlight');
+        $("#PublishPackages").addClass('highlight');
+    });
+  $("#RunWorkflowTests").hover(
+    function() {
+        $("#Clean").removeClass('highlight');
+        $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
+        $("#PackAggregate").removeClass('highlight');
+        $("#PackWorkflow").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
+        $("#PublishPackages").removeClass('highlight');
+        $("#Clean").addClass('highlight');
+        $("#BuildProjects").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
+    },
+    function() {
+        $("#Clean").removeClass('highlight');
+        $("#BuildProjects").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
+        $("#Clean").addClass('highlight');
+        $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
+        $("#PackWorkflow").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
+        $("#PackAggregate").addClass('highlight');
+        $("#PublishPackages").addClass('highlight');
+    });
+  $("#RunInMemoryPersistenceTests").hover(
+    function() {
+        $("#Clean").removeClass('highlight');
+        $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
+        $("#PackAggregate").removeClass('highlight');
+        $("#PackWorkflow").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
+        $("#PublishPackages").removeClass('highlight');
+        $("#Clean").addClass('highlight');
+        $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+    },
+    function() {
+        $("#Clean").removeClass('highlight');
+        $("#BuildProjects").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
+        $("#Clean").addClass('highlight');
+        $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
+        $("#PackWorkflow").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
         $("#PackAggregate").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
@@ -243,20 +361,32 @@ $(document).ready(function() {
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
         $("#PackAggregate").removeClass('highlight');
         $("#PackWorkflow").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
         $("#PackAggregate").addClass('highlight');
     },
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
         $("#PackAggregate").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
         $("#PackWorkflow").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
         $("#PackAggregate").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
@@ -264,20 +394,96 @@ $(document).ready(function() {
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
         $("#PackAggregate").removeClass('highlight');
         $("#PackWorkflow").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
         $("#PackWorkflow").addClass('highlight');
     },
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
         $("#PackWorkflow").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
         $("#PackWorkflow").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
+        $("#PackAggregate").addClass('highlight');
+        $("#PublishPackages").addClass('highlight');
+    });
+  $("#PackPersistence").hover(
+    function() {
+        $("#Clean").removeClass('highlight');
+        $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
+        $("#PackAggregate").removeClass('highlight');
+        $("#PackWorkflow").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
+        $("#PublishPackages").removeClass('highlight');
+        $("#Clean").addClass('highlight');
+        $("#BuildProjects").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+    },
+    function() {
+        $("#Clean").removeClass('highlight');
+        $("#BuildProjects").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#Clean").addClass('highlight');
+        $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
+        $("#PackWorkflow").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
+        $("#PackAggregate").addClass('highlight');
+        $("#PublishPackages").addClass('highlight');
+    });
+  $("#PackInMemoryPersistence").hover(
+    function() {
+        $("#Clean").removeClass('highlight');
+        $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
+        $("#PackAggregate").removeClass('highlight');
+        $("#PackWorkflow").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
+        $("#PublishPackages").removeClass('highlight');
+        $("#Clean").addClass('highlight');
+        $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+    },
+    function() {
+        $("#Clean").removeClass('highlight');
+        $("#BuildProjects").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
+        $("#Clean").addClass('highlight');
+        $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
+        $("#PackWorkflow").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
         $("#PackAggregate").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
@@ -285,24 +491,44 @@ $(document).ready(function() {
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
         $("#PackAggregate").removeClass('highlight');
         $("#PackWorkflow").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
         $("#PackWorkflow").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
         $("#PackAggregate").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     },
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
+        $("#RunInMemoryPersistenceTests").removeClass('highlight');
+        $("#PackInMemoryPersistence").removeClass('highlight');
+        $("#PackPersistence").removeClass('highlight');
+        $("#RunWorkflowTests").removeClass('highlight');
         $("#PackWorkflow").removeClass('highlight');
+        $("#RunAggregateTests").removeClass('highlight');
         $("#PackAggregate").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
+        $("#RunInMemoryPersistenceTests").addClass('highlight');
+        $("#PackInMemoryPersistence").addClass('highlight');
+        $("#PackPersistence").addClass('highlight');
+        $("#RunWorkflowTests").addClass('highlight');
         $("#PackWorkflow").addClass('highlight');
+        $("#RunAggregateTests").addClass('highlight');
         $("#PackAggregate").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
@@ -351,10 +577,17 @@ $(document).ready(function() {
     <div class="mermaid">
 graph LR
 Clean --> BuildProjects
-BuildProjects --> PackAggregate
-BuildProjects --> PackWorkflow
+BuildProjects --> RunAggregateTests
+BuildProjects --> RunWorkflowTests
+BuildProjects --> RunInMemoryPersistenceTests
+BuildProjects --> PackPersistence
+RunAggregateTests --> PackAggregate
+RunWorkflowTests --> PackWorkflow
+RunInMemoryPersistenceTests --> PackInMemoryPersistence
 PackAggregate --> PublishPackages
 PackWorkflow --> PublishPackages
+PackPersistence --> PublishPackages
+PackInMemoryPersistence --> PublishPackages
 PublishPackages
 
 

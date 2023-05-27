@@ -79,14 +79,15 @@
               "BuildProjects",
               "Clean",
               "PackAggregate",
+              "PackInMemoryPersistence",
+              "PackPersistence",
               "PackWorkflow",
-              "PublishPackages"
+              "PublishPackages",
+              "RunAggregateTests",
+              "RunInMemoryPersistenceTests",
+              "RunWorkflowTests"
             ]
           }
-        },
-        "Solution": {
-          "type": "string",
-          "description": "Path to a solution file that is automatically loaded"
         },
         "Target": {
           "type": "array",
@@ -97,8 +98,13 @@
               "BuildProjects",
               "Clean",
               "PackAggregate",
+              "PackInMemoryPersistence",
+              "PackPersistence",
               "PackWorkflow",
-              "PublishPackages"
+              "PublishPackages",
+              "RunAggregateTests",
+              "RunInMemoryPersistenceTests",
+              "RunWorkflowTests"
             ]
           }
         },

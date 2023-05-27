@@ -1,0 +1,11 @@
+﻿syntax = "proto3";
+package Proto.Lego.Workflow.Tests.TestWorkflow;
+option csharp_namespace = "Proto.Lego.Workflow.Tests.TestWorkflow";
+
+message TestWorkflowState {
+	string aggregate_one_id = 1;
+	string aggregate_two_id = 2;
+	string string_to_save = 3;
+	bool result_to_return_one = 4;
+	bool result_to_return_two = 5;
+}

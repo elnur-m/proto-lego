@@ -1,6 +1,6 @@
-﻿namespace Proto.Lego.Aggregate.Persistence;
+﻿namespace Proto.Lego.Persistence;
 
-public interface IAggregateStateStore
+public interface IKeyValueStateStore
 {
     Task<byte[]?> GetAsync(string key);
 
