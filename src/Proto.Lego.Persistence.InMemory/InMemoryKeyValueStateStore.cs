@@ -9,13 +9,7 @@ public class InMemoryKeyValueStateStore : IKeyValueStateStore
         return Task.FromResult(_states.TryGetValue(key, out var value) ? value : null);
     }
 
-    public Task PutAsync(string key, byte[] value)
-    {
-        _states.Add(key, value);
-        return Task.CompletedTask;
-    }
-
-    public Task UpdateAsync(string key, byte[] value)
+    public Task SetAsync(string key, byte[] value)
     {
         _states[key] = value;
         return Task.CompletedTask;

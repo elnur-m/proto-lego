@@ -23,8 +23,6 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
         InnerState = Any.Pack(new TState())
     };
 
-    private bool _hasPersistedState;
-
     protected Aggregate(IKeyValueStateStore stateStore, ILogger<Aggregate<TState>> logger)
     {
         _stateStore = stateStore;
@@ -70,7 +68,6 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
         var bytes = await _stateStore.GetAsync(Key);
         if (bytes != null)
         {
-            _hasPersistedState = true;
             State = DeserializeState(bytes);
         }
 
@@ -82,16 +79,7 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
         _logger.LogDebug("{self} entered PersistStateAsync", Key);
 
         var bytes = SerializeState();
-
-        if (_hasPersistedState)
-        {
-            await _stateStore.UpdateAsync(Key, bytes);
-        }
-        else
-        {
-            await _stateStore.PutAsync(Key, bytes);
-            _hasPersistedState = true;
-        }
+        await _stateStore.SetAsync(Key, bytes);
 
         _logger.LogDebug("{self} exited PersistStateAsync", Key);
     }

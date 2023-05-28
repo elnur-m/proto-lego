@@ -161,14 +161,7 @@ public abstract class Workflow<TState> : IActor where TState : IMessage, new()
 
         var bytes = SerializeState();
 
-        if (_hasPersistedState)
-        {
-            await _stateStore.UpdateAsync(Key, bytes);
-        }
-        else
-        {
-            await _stateStore.PutAsync(Key, bytes);
-        }
+        await _stateStore.SetAsync(Key, bytes);
 
         _logger.LogDebug("{self} exited PersistStateAsync", Key);
     }
