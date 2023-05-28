@@ -72,38 +72,30 @@ public class TestAggregate : Aggregate<TestAggregateState>
 
     private OperationResponse PrepareTestAction(TestAction testAction)
     {
-        var state = GetInnerState();
-        state.OperationsPerformed++;
-        SetInnerState(state);
+        InnerState.OperationsPerformed++;
 
         return new OperationResponse { Success = testAction.ResultToReturn };
     }
 
     private OperationResponse ConfirmTestAction(TestAction testAction)
     {
-        var state = GetInnerState();
-        state.SavedString = testAction.StringToSave;
-        state.OperationsPerformed++;
-        SetInnerState(state);
+        InnerState.SavedString = testAction.StringToSave;
+        InnerState.OperationsPerformed++;
 
         return new OperationResponse { Success = testAction.ResultToReturn };
     }
 
     private OperationResponse CancelTestAction(TestAction testAction)
     {
-        var state = GetInnerState();
-        state.OperationsPerformed++;
-        SetInnerState(state);
+        InnerState.OperationsPerformed++;
 
         return new OperationResponse { Success = true };
     }
 
     private OperationResponse ExecuteTestAction(TestAction testAction)
     {
-        var state = GetInnerState();
-        state.SavedString = testAction.StringToSave;
-        state.OperationsPerformed++;
-        SetInnerState(state);
+        InnerState.SavedString = testAction.StringToSave;
+        InnerState.OperationsPerformed++;
 
         return new OperationResponse { Success = testAction.ResultToReturn };
     }

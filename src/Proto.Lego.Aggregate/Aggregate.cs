@@ -18,15 +18,19 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
     protected string Key => PersistenceId;
     private IContext? _context;
 
-    protected AggregateStateWrapper State = new()
-    {
-        InnerState = Any.Pack(new TState())
-    };
+    protected TState InnerState;
+    protected AggregateStateWrapper State;
 
     protected Aggregate(IKeyValueStateStore stateStore, ILogger<Aggregate<TState>> logger)
     {
         _stateStore = stateStore;
         _logger = logger;
+
+        InnerState = new TState();
+        State = new()
+        {
+            InnerState = Any.Pack(InnerState)
+        };
     }
 
     public async Task ReceiveAsync(IContext context)
@@ -51,16 +55,6 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
         }
     }
 
-    protected TState GetInnerState()
-    {
-        return State.InnerState.Unpack<TState>();
-    }
-
-    protected void SetInnerState(TState innerState)
-    {
-        State.InnerState = Any.Pack(innerState);
-    }
-
     private async Task RecoverStateAsync()
     {
         _logger.LogDebug("{self} entered RecoverStateAsync", Key);
@@ -69,6 +63,7 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
         if (bytes != null)
         {
             State = DeserializeState(bytes);
+            InnerState = State.InnerState.Unpack<TState>();
         }
 
         _logger.LogDebug("{self} exited RecoverStateAsync", Key);
@@ -78,6 +73,7 @@ public abstract class Aggregate<TState> : IActor where TState : IMessage, new()
     {
         _logger.LogDebug("{self} entered PersistStateAsync", Key);
 
+        State.InnerState = Any.Pack(InnerState);
         var bytes = SerializeState();
         await _stateStore.SetAsync(Key, bytes);
 

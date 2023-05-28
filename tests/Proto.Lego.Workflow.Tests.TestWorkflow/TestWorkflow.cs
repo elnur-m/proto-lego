@@ -16,36 +16,34 @@ public class TestWorkflow : Workflow<TestWorkflowState>
 
     protected override async Task ExecuteWorkflowAsync()
     {
-        var innerState = GetInnerState();
-
         var testActionOne = new TestAction
         {
-            StringToSave = innerState.StringToSave,
-            ResultToReturn = innerState.ResultToReturnOne
+            StringToSave = InnerState!.StringToSave,
+            ResultToReturn = InnerState.ResultToReturnOne
         };
 
         var testActionTwo = new TestAction
         {
-            StringToSave = innerState.StringToSave,
-            ResultToReturn = innerState.ResultToReturnTwo
+            StringToSave = InnerState.StringToSave,
+            ResultToReturn = InnerState.ResultToReturnTwo
         };
 
-        var prepareOneTask = PrepareAsync(TestAggregate.AggregateKind, innerState.AggregateOneId, testActionOne);
-        var prepareTwoTask = PrepareAsync(TestAggregate.AggregateKind, innerState.AggregateTwoId, testActionTwo);
+        var prepareOneTask = PrepareAsync(TestAggregate.AggregateKind, InnerState.AggregateOneId, testActionOne);
+        var prepareTwoTask = PrepareAsync(TestAggregate.AggregateKind, InnerState.AggregateTwoId, testActionTwo);
 
         var prepareResults = await Task.WhenAll(prepareOneTask, prepareTwoTask);
 
         if (prepareResults.All(x => x.Success))
         {
-            var confirmOneTask = ConfirmAsync(TestAggregate.AggregateKind, innerState.AggregateOneId, testActionOne);
-            var confirmTwoTask = ConfirmAsync(TestAggregate.AggregateKind, innerState.AggregateTwoId, testActionTwo);
+            var confirmOneTask = ConfirmAsync(TestAggregate.AggregateKind, InnerState.AggregateOneId, testActionOne);
+            var confirmTwoTask = ConfirmAsync(TestAggregate.AggregateKind, InnerState.AggregateTwoId, testActionTwo);
 
             await Task.WhenAll(confirmOneTask, confirmTwoTask);
         }
         else
         {
-            var cancelOneTask = CancelAsync(TestAggregate.AggregateKind, innerState.AggregateOneId, testActionOne);
-            var cancelTwoTask = CancelAsync(TestAggregate.AggregateKind, innerState.AggregateTwoId, testActionTwo);
+            var cancelOneTask = CancelAsync(TestAggregate.AggregateKind, InnerState.AggregateOneId, testActionOne);
+            var cancelTwoTask = CancelAsync(TestAggregate.AggregateKind, InnerState.AggregateTwoId, testActionTwo);
 
             await Task.WhenAll(cancelOneTask, cancelTwoTask);
         }

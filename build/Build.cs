@@ -31,7 +31,7 @@ internal class Build : NukeBuild
     [Parameter][Secret] private readonly string NuGetApiKey;
 
     private AbsolutePath PackagesDirectory => TemporaryDirectory / "packages";
-    private const string Version = "1.0.0-alpha.4";
+    private const string Version = "1.0.0-alpha.5";
 
     private Target Clean => _ => _
         .Executes(() =>
@@ -152,7 +152,7 @@ internal class Build : NukeBuild
         .DependsOn(PackPersistence)
         .DependsOn(PackInMemoryPersistence)
         .DependsOn(PackNpgsqlPersistence)
-        //.Requires(() => NuGetApiKey)
+        .Requires(() => NuGetApiKey)
         .Executes(() =>
         {
             var packagePaths = PackagesDirectory.GlobFiles($"*{Version}.nupkg");

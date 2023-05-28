@@ -14,6 +14,7 @@ public abstract class Workflow<TState> : IActor where TState : IMessage, new()
     private readonly IAliveWorkflowStore _aliveWorkflowStore;
     private readonly ILogger<Workflow<TState>> _logger;
 
+    protected TState? InnerState;
     protected WorkflowStateWrapper? State;
 
     protected string? Kind;
@@ -65,16 +66,6 @@ public abstract class Workflow<TState> : IActor where TState : IMessage, new()
                 ExecuteInBackground();
                 break;
         }
-    }
-
-    protected TState GetInnerState()
-    {
-        return State!.InnerState.Unpack<TState>();
-    }
-
-    protected void SetInnerState(TState innerState)
-    {
-        State!.InnerState = Any.Pack(innerState);
     }
 
     protected virtual byte[] SerializeState()
@@ -150,6 +141,7 @@ public abstract class Workflow<TState> : IActor where TState : IMessage, new()
         {
             _hasPersistedState = true;
             State = DeserializeState(bytes);
+            InnerState = State.InnerState.Unpack<TState>();
         }
 
         _logger.LogDebug("{self} exited RecoverStateAsync", Key);
@@ -159,6 +151,7 @@ public abstract class Workflow<TState> : IActor where TState : IMessage, new()
     {
         _logger.LogDebug("{self} entered PersistStateAsync", Key);
 
+        State!.InnerState = Any.Pack(InnerState);
         var bytes = SerializeState();
 
         await _stateStore.SetAsync(Key, bytes);
@@ -226,9 +219,10 @@ public abstract class Workflow<TState> : IActor where TState : IMessage, new()
         {
             await _aliveWorkflowStore.SetAsync(Key);
 
+            InnerState = state;
             State = new WorkflowStateWrapper
             {
-                InnerState = Any.Pack(state)
+                InnerState = Any.Pack(InnerState)
             };
             await PersistStateAsync();
             _hasPersistedState = true;
