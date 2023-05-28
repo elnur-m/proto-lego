@@ -2,7 +2,7 @@
 
 public interface IAliveWorkflowStore
 {
-    Task PutAsync(string key);
+    Task SetAsync(string key);
 
     Task DeleteAsync(string key);
 

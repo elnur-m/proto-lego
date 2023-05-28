@@ -23,9 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Persistence.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Persistence.InMemory.Tests", "tests\Proto.Lego.Persistence.InMemory.Tests\Proto.Lego.Persistence.InMemory.Tests.csproj", "{98E094B5-C7F8-4526-9E95-0E955D1ECC2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proto.Lego.Workflow.Tests", "tests\Proto.Lego.Workflow.Tests\Proto.Lego.Workflow.Tests.csproj", "{065B1E30-9669-49AA-AADC-D8FDC9094C10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Workflow.Tests", "tests\Proto.Lego.Workflow.Tests\Proto.Lego.Workflow.Tests.csproj", "{065B1E30-9669-49AA-AADC-D8FDC9094C10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proto.Lego.Workflow.Tests.TestWorkflow", "tests\Proto.Lego.Workflow.Tests.TestWorkflow\Proto.Lego.Workflow.Tests.TestWorkflow.csproj", "{E8D188DD-666B-48C0-AEAF-D5D393FB7A55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Workflow.Tests.TestWorkflow", "tests\Proto.Lego.Workflow.Tests.TestWorkflow\Proto.Lego.Workflow.Tests.TestWorkflow.csproj", "{E8D188DD-666B-48C0-AEAF-D5D393FB7A55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proto.Lego.Persistence.Npgsql", "src\Proto.Lego.Persistence.Npgsql\Proto.Lego.Persistence.Npgsql.csproj", "{D39681A5-9BF3-4ED9-A687-B61CAD3CC6FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{E8D188DD-666B-48C0-AEAF-D5D393FB7A55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8D188DD-666B-48C0-AEAF-D5D393FB7A55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8D188DD-666B-48C0-AEAF-D5D393FB7A55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D39681A5-9BF3-4ED9-A687-B61CAD3CC6FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D39681A5-9BF3-4ED9-A687-B61CAD3CC6FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D39681A5-9BF3-4ED9-A687-B61CAD3CC6FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D39681A5-9BF3-4ED9-A687-B61CAD3CC6FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

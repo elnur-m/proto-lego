@@ -4,7 +4,7 @@ public class InMemoryAliveWorkflowStore : IAliveWorkflowStore
 {
     private readonly HashSet<string> _workflowIds = new();
 
-    public Task PutAsync(string key)
+    public Task SetAsync(string key)
     {
         if (!_workflowIds.Contains(key))
         {

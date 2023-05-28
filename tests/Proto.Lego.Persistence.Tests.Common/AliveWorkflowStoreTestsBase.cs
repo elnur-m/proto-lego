@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Shouldly;
+using Xunit;
 
 namespace Proto.Lego.Persistence.Tests.Common;
 
@@ -12,25 +13,25 @@ public abstract class AliveWorkflowStoreTestsBase
     }
 
     [Fact]
-    public async Task PutAsync_WhenNewValue_Succeeds()
+    public async Task SetAsync_WhenNewValue_Succeeds()
     {
         var key = Guid.NewGuid().ToString();
-        await _aliveWorkflowStore.PutAsync(key);
+        await _aliveWorkflowStore.SetAsync(key);
     }
 
     [Fact]
-    public async Task PutAsync_WhenValueExists_Succeeds()
+    public async Task SetAsync_WhenValueExists_Succeeds()
     {
         var key = Guid.NewGuid().ToString();
-        await _aliveWorkflowStore.PutAsync(key);
-        await _aliveWorkflowStore.PutAsync(key);
+        await _aliveWorkflowStore.SetAsync(key);
+        await _aliveWorkflowStore.SetAsync(key);
     }
 
     [Fact]
     public async Task DeleteAsync_WhenValueExists_Succeeds()
     {
         var key = Guid.NewGuid().ToString();
-        await _aliveWorkflowStore.PutAsync(key);
+        await _aliveWorkflowStore.SetAsync(key);
         await _aliveWorkflowStore.DeleteAsync(key);
     }
 
@@ -47,13 +48,13 @@ public abstract class AliveWorkflowStoreTestsBase
         var actedOnKeys = new List<string>();
         var key = Guid.NewGuid().ToString();
 
-        await _aliveWorkflowStore.PutAsync(key);
+        await _aliveWorkflowStore.SetAsync(key);
         await _aliveWorkflowStore.ActOnAllAsync(s =>
         {
             actedOnKeys.Add(s);
             return Task.CompletedTask;
         });
 
-        Assert.Contains(key, actedOnKeys);
+        actedOnKeys.ShouldContain(key);
     }
 }

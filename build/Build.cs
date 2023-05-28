@@ -31,7 +31,7 @@ internal class Build : NukeBuild
     [Parameter][Secret] private readonly string NuGetApiKey;
 
     private AbsolutePath PackagesDirectory => TemporaryDirectory / "packages";
-    private const string Version = "1.0.0-alpha.3";
+    private const string Version = "1.0.0-alpha.4";
 
     private Target Clean => _ => _
         .Executes(() =>
@@ -132,13 +132,27 @@ internal class Build : NukeBuild
             );
         });
 
+    private Target PackNpgsqlPersistence => _ => _
+        .DependsOn(BuildProjects)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNetPack(_ => _
+                .SetProject(RootDirectory / "src" / "Proto.Lego.Persistence.Npgsql")
+                .SetNoRestore(true)
+                .SetNoBuild(true)
+                .SetVersion(Version)
+                .SetOutputDirectory(PackagesDirectory)
+            );
+        });
+
     private Target PublishPackages => _ => _
         .OnlyWhenStatic(() => IsServerBuild)
         .DependsOn(PackAggregate)
         .DependsOn(PackWorkflow)
         .DependsOn(PackPersistence)
         .DependsOn(PackInMemoryPersistence)
-        .Requires(() => NuGetApiKey)
+        .DependsOn(PackNpgsqlPersistence)
+        //.Requires(() => NuGetApiKey)
         .Executes(() =>
         {
             var packagePaths = PackagesDirectory.GlobFiles($"*{Version}.nupkg");

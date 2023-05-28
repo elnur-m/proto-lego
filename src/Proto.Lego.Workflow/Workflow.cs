@@ -224,7 +224,7 @@ public abstract class Workflow<TState> : IActor where TState : IMessage, new()
 
         if (!_hasPersistedState)
         {
-            await _aliveWorkflowStore.PutAsync(Key);
+            await _aliveWorkflowStore.SetAsync(Key);
 
             State = new WorkflowStateWrapper
             {
