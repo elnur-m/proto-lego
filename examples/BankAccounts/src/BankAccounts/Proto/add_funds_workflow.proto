@@ -1,0 +1,11 @@
+﻿syntax = "proto3";
+package BankAccounts.Workflows.AddFunds;
+option csharp_namespace = "BankAccounts.Workflows.AddFunds";
+
+message AddFundsWorkflowState {
+	bool succeeded = 1;
+	string error_message = 2;
+
+	string account_id = 3;
+	int64 amount = 4;
+}

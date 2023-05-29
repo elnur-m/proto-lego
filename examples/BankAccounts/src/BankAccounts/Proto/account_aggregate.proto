@@ -1,0 +1,23 @@
+﻿syntax = "proto3";
+package BankAccounts.Aggregates.Account;
+option csharp_namespace = "BankAccounts.Aggregates.Account";
+
+message Create {
+
+}
+
+message Add {
+	int64 amount = 1;
+}
+
+message Subtract {
+	int64 amount = 1;
+}
+
+//State
+
+message AccountAggregateState {
+	bool exists = 1;
+	int64 total_funds = 2;
+	int64 blocked_funds = 3;
+}

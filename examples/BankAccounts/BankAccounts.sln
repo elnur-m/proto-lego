@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_References", "_References", "{8E892062-96D4-4EE6-BEC9-05B364A80882}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Aggregate", "..\..\src\Proto.Lego.Aggregate\Proto.Lego.Aggregate.csproj", "{87362338-829D-46EA-9D3A-9A9A9D285848}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Workflow", "..\..\src\Proto.Lego.Workflow\Proto.Lego.Workflow.csproj", "{954CF880-B8F5-429B-8A46-53169031AA0C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Persistence.Npgsql", "..\..\src\Proto.Lego.Persistence.Npgsql\Proto.Lego.Persistence.Npgsql.csproj", "{2CAF526C-FDED-4B9D-91F3-689A2B213235}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankAccounts", "src\BankAccounts\BankAccounts.csproj", "{024531D1-3472-48C2-84DA-84111451558A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankAccounts.WebApi", "src\BankAccounts.WebApi\BankAccounts.WebApi.csproj", "{A4F675D7-0C2B-42F8-B072-AF4E124C9C1B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{87362338-829D-46EA-9D3A-9A9A9D285848}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87362338-829D-46EA-9D3A-9A9A9D285848}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87362338-829D-46EA-9D3A-9A9A9D285848}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87362338-829D-46EA-9D3A-9A9A9D285848}.Release|Any CPU.Build.0 = Release|Any CPU
+		{954CF880-B8F5-429B-8A46-53169031AA0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{954CF880-B8F5-429B-8A46-53169031AA0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{954CF880-B8F5-429B-8A46-53169031AA0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{954CF880-B8F5-429B-8A46-53169031AA0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CAF526C-FDED-4B9D-91F3-689A2B213235}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CAF526C-FDED-4B9D-91F3-689A2B213235}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CAF526C-FDED-4B9D-91F3-689A2B213235}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CAF526C-FDED-4B9D-91F3-689A2B213235}.Release|Any CPU.Build.0 = Release|Any CPU
+		{024531D1-3472-48C2-84DA-84111451558A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{024531D1-3472-48C2-84DA-84111451558A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{024531D1-3472-48C2-84DA-84111451558A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{024531D1-3472-48C2-84DA-84111451558A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4F675D7-0C2B-42F8-B072-AF4E124C9C1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4F675D7-0C2B-42F8-B072-AF4E124C9C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4F675D7-0C2B-42F8-B072-AF4E124C9C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4F675D7-0C2B-42F8-B072-AF4E124C9C1B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{87362338-829D-46EA-9D3A-9A9A9D285848} = {8E892062-96D4-4EE6-BEC9-05B364A80882}
+		{954CF880-B8F5-429B-8A46-53169031AA0C} = {8E892062-96D4-4EE6-BEC9-05B364A80882}
+		{2CAF526C-FDED-4B9D-91F3-689A2B213235} = {8E892062-96D4-4EE6-BEC9-05B364A80882}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6AA67659-FBF8-4978-8F42-097AFD66DDBE}
+	EndGlobalSection
+EndGlobal

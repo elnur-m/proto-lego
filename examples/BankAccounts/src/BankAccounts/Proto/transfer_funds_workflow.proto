@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+package BankAccounts.Workflows.TransferFunds;
+option csharp_namespace = "BankAccounts.Workflows.TransferFunds";
+
+message TransferFundsWorkflowState {
+	bool succeeded = 1;
+	string error_message = 2;
+
+	string from_account_id = 3;
+	string to_account_id = 4;
+	int64 amount = 5;
+}

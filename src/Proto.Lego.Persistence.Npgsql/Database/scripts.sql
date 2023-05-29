@@ -1,10 +1,10 @@
 ﻿CREATE TABLE key_value_states
 (
-	key INT PRIMARY KEY,
-	value VARCHAR(500)
-)
+	key VARCHAR(500) PRIMARY KEY,
+	value BYTEA
+);
 
 CREATE TABLE alive_workflows
 (
-	key INT PRIMARY KEY
-)
+	key VARCHAR(500) PRIMARY KEY
+);

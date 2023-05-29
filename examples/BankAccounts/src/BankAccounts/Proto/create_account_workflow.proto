@@ -1,0 +1,10 @@
+﻿syntax = "proto3";
+package BankAccounts.Workflows.CreateAccount;
+option csharp_namespace = "BankAccounts.Workflows.CreateAccount";
+
+message CreateAccountWorkflowState {
+	bool succeeded = 1;
+	string error_message = 2;
+
+	string account_id = 3;
+}
