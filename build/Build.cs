@@ -31,7 +31,7 @@ internal class Build : NukeBuild
     [Parameter][Secret] private readonly string NuGetApiKey;
 
     private AbsolutePath PackagesDirectory => TemporaryDirectory / "packages";
-    private const string Version = "1.0.0-alpha.5";
+    private const string Version = "1.0.0-alpha.6";
 
     private Target Clean => _ => _
         .Executes(() =>
@@ -47,23 +47,12 @@ internal class Build : NukeBuild
             DotNetTasks.DotNetBuild();
         });
 
-    private Target RunAggregateTests => _ => _
+    private Target RunLegoTests => _ => _
         .DependsOn(BuildProjects)
         .Executes(() =>
         {
             DotNetTasks.DotNetTest(_ => _
-                .SetProjectFile(RootDirectory / "tests" / "Proto.Lego.Aggregate.Tests")
-                .SetNoRestore(true)
-                .SetNoBuild(true)
-            );
-        });
-
-    private Target RunWorkflowTests => _ => _
-        .DependsOn(BuildProjects)
-        .Executes(() =>
-        {
-            DotNetTasks.DotNetTest(_ => _
-                .SetProjectFile(RootDirectory / "tests" / "Proto.Lego.Workflow.Tests")
+                .SetProjectFile(RootDirectory / "tests" / "Proto.Lego.Tests")
                 .SetNoRestore(true)
                 .SetNoBuild(true)
             );
@@ -80,38 +69,12 @@ internal class Build : NukeBuild
             );
         });
 
-    private Target PackAggregate => _ => _
-        .DependsOn(RunAggregateTests)
+    private Target PackLego => _ => _
+        .DependsOn(RunLegoTests)
         .Executes(() =>
         {
             DotNetTasks.DotNetPack(_ => _
-                .SetProject(RootDirectory / "src" / "Proto.Lego.Aggregate")
-                .SetNoRestore(true)
-                .SetNoBuild(true)
-                .SetVersion(Version)
-                .SetOutputDirectory(PackagesDirectory)
-            );
-        });
-
-    private Target PackWorkflow => _ => _
-        .DependsOn(RunWorkflowTests)
-        .Executes(() =>
-        {
-            DotNetTasks.DotNetPack(_ => _
-                .SetProject(RootDirectory / "src" / "Proto.Lego.Workflow")
-                .SetNoRestore(true)
-                .SetNoBuild(true)
-                .SetVersion(Version)
-                .SetOutputDirectory(PackagesDirectory)
-            );
-        });
-
-    private Target PackPersistence => _ => _
-        .DependsOn(BuildProjects)
-        .Executes(() =>
-        {
-            DotNetTasks.DotNetPack(_ => _
-                .SetProject(RootDirectory / "src" / "Proto.Lego.Persistence")
+                .SetProject(RootDirectory / "src" / "Proto.Lego")
                 .SetNoRestore(true)
                 .SetNoBuild(true)
                 .SetVersion(Version)
@@ -147,9 +110,7 @@ internal class Build : NukeBuild
 
     private Target PublishPackages => _ => _
         .OnlyWhenStatic(() => IsServerBuild)
-        .DependsOn(PackAggregate)
-        .DependsOn(PackWorkflow)
-        .DependsOn(PackPersistence)
+        .DependsOn(PackLego)
         .DependsOn(PackInMemoryPersistence)
         .DependsOn(PackNpgsqlPersistence)
         .Requires(() => NuGetApiKey)

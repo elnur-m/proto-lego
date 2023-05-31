@@ -203,22 +203,16 @@ $(document).ready(function() {
   $("#PackNpgsqlPersistence").addClass('highlight');
   $("#RunInMemoryPersistenceTests").addClass('highlight');
   $("#PackInMemoryPersistence").addClass('highlight');
-  $("#PackPersistence").addClass('highlight');
-  $("#RunWorkflowTests").addClass('highlight');
-  $("#PackWorkflow").addClass('highlight');
-  $("#RunAggregateTests").addClass('highlight');
-  $("#PackAggregate").addClass('highlight');
+  $("#RunLegoTests").addClass('highlight');
+  $("#PackLego").addClass('highlight');
   $("#PublishPackages").addClass('highlight');
   $("#Clean").hover(
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunLegoTests").removeClass('highlight');
         $("#RunInMemoryPersistenceTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
+        $("#PackLego").removeClass('highlight');
         $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PackNpgsqlPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
@@ -231,23 +225,17 @@ $(document).ready(function() {
         $("#PackNpgsqlPersistence").addClass('highlight');
         $("#RunInMemoryPersistenceTests").addClass('highlight');
         $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
+        $("#RunLegoTests").addClass('highlight');
+        $("#PackLego").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
   $("#BuildProjects").hover(
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunLegoTests").removeClass('highlight');
         $("#RunInMemoryPersistenceTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
+        $("#PackLego").removeClass('highlight');
         $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PackNpgsqlPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
@@ -262,89 +250,44 @@ $(document).ready(function() {
         $("#PackNpgsqlPersistence").addClass('highlight');
         $("#RunInMemoryPersistenceTests").addClass('highlight');
         $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
+        $("#RunLegoTests").addClass('highlight');
+        $("#PackLego").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
-  $("#RunAggregateTests").hover(
+  $("#RunLegoTests").hover(
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunLegoTests").removeClass('highlight');
         $("#RunInMemoryPersistenceTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
+        $("#PackLego").removeClass('highlight');
         $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PackNpgsqlPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
+        $("#RunLegoTests").addClass('highlight');
     },
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
+        $("#RunLegoTests").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
         $("#PackNpgsqlPersistence").addClass('highlight');
         $("#RunInMemoryPersistenceTests").addClass('highlight');
         $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
-        $("#PublishPackages").addClass('highlight');
-    });
-  $("#RunWorkflowTests").hover(
-    function() {
-        $("#Clean").removeClass('highlight');
-        $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
-        $("#RunInMemoryPersistenceTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
-        $("#PackInMemoryPersistence").removeClass('highlight');
-        $("#PackNpgsqlPersistence").removeClass('highlight');
-        $("#PublishPackages").removeClass('highlight');
-        $("#Clean").addClass('highlight');
-        $("#BuildProjects").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-    },
-    function() {
-        $("#Clean").removeClass('highlight');
-        $("#BuildProjects").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
-        $("#Clean").addClass('highlight');
-        $("#BuildProjects").addClass('highlight');
-        $("#PackNpgsqlPersistence").addClass('highlight');
-        $("#RunInMemoryPersistenceTests").addClass('highlight');
-        $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
+        $("#RunLegoTests").addClass('highlight');
+        $("#PackLego").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
   $("#RunInMemoryPersistenceTests").hover(
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunLegoTests").removeClass('highlight');
         $("#RunInMemoryPersistenceTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
+        $("#PackLego").removeClass('highlight');
         $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PackNpgsqlPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
@@ -361,126 +304,46 @@ $(document).ready(function() {
         $("#PackNpgsqlPersistence").addClass('highlight');
         $("#RunInMemoryPersistenceTests").addClass('highlight');
         $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
+        $("#RunLegoTests").addClass('highlight');
+        $("#PackLego").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
-  $("#PackAggregate").hover(
+  $("#PackLego").hover(
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunLegoTests").removeClass('highlight');
         $("#RunInMemoryPersistenceTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
+        $("#PackLego").removeClass('highlight');
         $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PackNpgsqlPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
+        $("#RunLegoTests").addClass('highlight');
+        $("#PackLego").addClass('highlight');
     },
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
+        $("#RunLegoTests").removeClass('highlight');
+        $("#PackLego").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
         $("#PackNpgsqlPersistence").addClass('highlight');
         $("#RunInMemoryPersistenceTests").addClass('highlight');
         $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
-        $("#PublishPackages").addClass('highlight');
-    });
-  $("#PackWorkflow").hover(
-    function() {
-        $("#Clean").removeClass('highlight');
-        $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
-        $("#RunInMemoryPersistenceTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
-        $("#PackInMemoryPersistence").removeClass('highlight');
-        $("#PackNpgsqlPersistence").removeClass('highlight');
-        $("#PublishPackages").removeClass('highlight');
-        $("#Clean").addClass('highlight');
-        $("#BuildProjects").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-    },
-    function() {
-        $("#Clean").removeClass('highlight');
-        $("#BuildProjects").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#Clean").addClass('highlight');
-        $("#BuildProjects").addClass('highlight');
-        $("#PackNpgsqlPersistence").addClass('highlight');
-        $("#RunInMemoryPersistenceTests").addClass('highlight');
-        $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
-        $("#PublishPackages").addClass('highlight');
-    });
-  $("#PackPersistence").hover(
-    function() {
-        $("#Clean").removeClass('highlight');
-        $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
-        $("#RunInMemoryPersistenceTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
-        $("#PackInMemoryPersistence").removeClass('highlight');
-        $("#PackNpgsqlPersistence").removeClass('highlight');
-        $("#PublishPackages").removeClass('highlight');
-        $("#Clean").addClass('highlight');
-        $("#BuildProjects").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-    },
-    function() {
-        $("#Clean").removeClass('highlight');
-        $("#BuildProjects").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
-        $("#Clean").addClass('highlight');
-        $("#BuildProjects").addClass('highlight');
-        $("#PackNpgsqlPersistence").addClass('highlight');
-        $("#RunInMemoryPersistenceTests").addClass('highlight');
-        $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
+        $("#RunLegoTests").addClass('highlight');
+        $("#PackLego").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
   $("#PackInMemoryPersistence").hover(
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunLegoTests").removeClass('highlight');
         $("#RunInMemoryPersistenceTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
+        $("#PackLego").removeClass('highlight');
         $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PackNpgsqlPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
@@ -499,23 +362,17 @@ $(document).ready(function() {
         $("#PackNpgsqlPersistence").addClass('highlight');
         $("#RunInMemoryPersistenceTests").addClass('highlight');
         $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
+        $("#RunLegoTests").addClass('highlight');
+        $("#PackLego").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
   $("#PackNpgsqlPersistence").hover(
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunLegoTests").removeClass('highlight');
         $("#RunInMemoryPersistenceTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
+        $("#PackLego").removeClass('highlight');
         $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PackNpgsqlPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
@@ -532,23 +389,17 @@ $(document).ready(function() {
         $("#PackNpgsqlPersistence").addClass('highlight');
         $("#RunInMemoryPersistenceTests").addClass('highlight');
         $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
+        $("#RunLegoTests").addClass('highlight');
+        $("#PackLego").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
   $("#PublishPackages").hover(
     function() {
         $("#Clean").removeClass('highlight');
         $("#BuildProjects").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
+        $("#RunLegoTests").removeClass('highlight');
         $("#RunInMemoryPersistenceTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
+        $("#PackLego").removeClass('highlight');
         $("#PackInMemoryPersistence").removeClass('highlight');
         $("#PackNpgsqlPersistence").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
@@ -557,11 +408,8 @@ $(document).ready(function() {
         $("#PackNpgsqlPersistence").addClass('highlight');
         $("#RunInMemoryPersistenceTests").addClass('highlight');
         $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
+        $("#RunLegoTests").addClass('highlight');
+        $("#PackLego").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     },
     function() {
@@ -570,22 +418,16 @@ $(document).ready(function() {
         $("#PackNpgsqlPersistence").removeClass('highlight');
         $("#RunInMemoryPersistenceTests").removeClass('highlight');
         $("#PackInMemoryPersistence").removeClass('highlight');
-        $("#PackPersistence").removeClass('highlight');
-        $("#RunWorkflowTests").removeClass('highlight');
-        $("#PackWorkflow").removeClass('highlight');
-        $("#RunAggregateTests").removeClass('highlight');
-        $("#PackAggregate").removeClass('highlight');
+        $("#RunLegoTests").removeClass('highlight');
+        $("#PackLego").removeClass('highlight');
         $("#PublishPackages").removeClass('highlight');
         $("#Clean").addClass('highlight');
         $("#BuildProjects").addClass('highlight');
         $("#PackNpgsqlPersistence").addClass('highlight');
         $("#RunInMemoryPersistenceTests").addClass('highlight');
         $("#PackInMemoryPersistence").addClass('highlight');
-        $("#PackPersistence").addClass('highlight');
-        $("#RunWorkflowTests").addClass('highlight');
-        $("#PackWorkflow").addClass('highlight');
-        $("#RunAggregateTests").addClass('highlight');
-        $("#PackAggregate").addClass('highlight');
+        $("#RunLegoTests").addClass('highlight');
+        $("#PackLego").addClass('highlight');
         $("#PublishPackages").addClass('highlight');
     });
 
@@ -633,17 +475,12 @@ $(document).ready(function() {
     <div class="mermaid">
 graph LR
 Clean --> BuildProjects
-BuildProjects --> RunAggregateTests
-BuildProjects --> RunWorkflowTests
+BuildProjects --> RunLegoTests
 BuildProjects --> RunInMemoryPersistenceTests
-BuildProjects --> PackPersistence
 BuildProjects --> PackNpgsqlPersistence
-RunAggregateTests --> PackAggregate
-RunWorkflowTests --> PackWorkflow
+RunLegoTests --> PackLego
 RunInMemoryPersistenceTests --> PackInMemoryPersistence
-PackAggregate --> PublishPackages
-PackWorkflow --> PublishPackages
-PackPersistence --> PublishPackages
+PackLego --> PublishPackages
 PackInMemoryPersistence --> PublishPackages
 PackNpgsqlPersistence --> PublishPackages
 PublishPackages

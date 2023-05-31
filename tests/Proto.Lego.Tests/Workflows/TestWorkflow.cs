@@ -47,11 +47,4 @@ public class TestWorkflow : Workflow<TestWorkflowInput>
             await Task.WhenAll(cancelOneTask, cancelTwoTask);
         }
     }
-
-    protected override async Task CleanUpAsync()
-    {
-        await base.CleanUpAsync();
-        await RemoveFromStoreAsync();
-        Stop();
-    }
 }

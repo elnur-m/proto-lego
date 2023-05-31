@@ -78,15 +78,12 @@
             "enum": [
               "BuildProjects",
               "Clean",
-              "PackAggregate",
               "PackInMemoryPersistence",
+              "PackLego",
               "PackNpgsqlPersistence",
-              "PackPersistence",
-              "PackWorkflow",
               "PublishPackages",
-              "RunAggregateTests",
               "RunInMemoryPersistenceTests",
-              "RunWorkflowTests"
+              "RunLegoTests"
             ]
           }
         },
@@ -98,15 +95,12 @@
             "enum": [
               "BuildProjects",
               "Clean",
-              "PackAggregate",
               "PackInMemoryPersistence",
+              "PackLego",
               "PackNpgsqlPersistence",
-              "PackPersistence",
-              "PackWorkflow",
               "PublishPackages",
-              "RunAggregateTests",
               "RunInMemoryPersistenceTests",
-              "RunWorkflowTests"
+              "RunLegoTests"
             ]
           }
         },
