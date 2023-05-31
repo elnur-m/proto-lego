@@ -3,7 +3,7 @@ using Proto;
 using Proto.Cluster;
 using Proto.Lego.Persistence;
 using Proto.Lego.Persistence.Npgsql;
-using Proto.Lego.Workflow.Messages;
+using Proto.Lego.Workflow;
 
 namespace BankAccounts.WebApi;
 
@@ -22,13 +22,13 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         var keyValueStore =
-            new NpgsqlKeyValueStateStore(configuration.GetConnectionString("postgres")!, "key_value_states");
+            new NpgsqlAggregateStore(configuration.GetConnectionString("postgres")!, "aggregates");
 
         var aliveWorkflowStore =
-            new NpgsqlAliveWorkflowStore(configuration.GetConnectionString("postgres")!, "alive_workflows");
+            new NpgsqlWorkflowStore(configuration.GetConnectionString("postgres")!, "workflows");
 
-        builder.Services.AddSingleton<IKeyValueStateStore>(keyValueStore);
-        builder.Services.AddSingleton<IAliveWorkflowStore>(aliveWorkflowStore);
+        builder.Services.AddSingleton<IAggregateStore>(keyValueStore);
+        builder.Services.AddSingleton<IWorkflowStore>(aliveWorkflowStore);
 
         builder.Services.AddActorSystem();
 
@@ -48,9 +48,9 @@ public class Program
         {
             if (topology.Members.Any())
             {
-                await aliveWorkflowStore.ActOnAllAsync(async s =>
+                await aliveWorkflowStore.ActOnAllAsync(async (key, state) =>
                 {
-                    var split = s.Split('/');
+                    var split = key.Split('/');
                     var kind = string.Join('/', split.Take(split.Length - 1));
                     var identity = split.Last();
                     await cluster.RequestAsync<object>(identity, kind, new Trigger(), CancellationToken.None);

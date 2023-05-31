@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Workflow", "..\.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Persistence.Npgsql", "..\..\src\Proto.Lego.Persistence.Npgsql\Proto.Lego.Persistence.Npgsql.csproj", "{2CAF526C-FDED-4B9D-91F3-689A2B213235}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankAccounts", "src\BankAccounts\BankAccounts.csproj", "{024531D1-3472-48C2-84DA-84111451558A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankAccounts", "src\BankAccounts\BankAccounts.csproj", "{024531D1-3472-48C2-84DA-84111451558A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankAccounts.WebApi", "src\BankAccounts.WebApi\BankAccounts.WebApi.csproj", "{A4F675D7-0C2B-42F8-B072-AF4E124C9C1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankAccounts.WebApi", "src\BankAccounts.WebApi\BankAccounts.WebApi.csproj", "{A4F675D7-0C2B-42F8-B072-AF4E124C9C1B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego", "..\..\src\Proto.Lego\Proto.Lego.csproj", "{00B8653B-8E58-4DAA-BEE3-69E5E7CC2CD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{A4F675D7-0C2B-42F8-B072-AF4E124C9C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4F675D7-0C2B-42F8-B072-AF4E124C9C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4F675D7-0C2B-42F8-B072-AF4E124C9C1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00B8653B-8E58-4DAA-BEE3-69E5E7CC2CD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00B8653B-8E58-4DAA-BEE3-69E5E7CC2CD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00B8653B-8E58-4DAA-BEE3-69E5E7CC2CD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00B8653B-8E58-4DAA-BEE3-69E5E7CC2CD0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +55,7 @@ Global
 		{87362338-829D-46EA-9D3A-9A9A9D285848} = {8E892062-96D4-4EE6-BEC9-05B364A80882}
 		{954CF880-B8F5-429B-8A46-53169031AA0C} = {8E892062-96D4-4EE6-BEC9-05B364A80882}
 		{2CAF526C-FDED-4B9D-91F3-689A2B213235} = {8E892062-96D4-4EE6-BEC9-05B364A80882}
+		{00B8653B-8E58-4DAA-BEE3-69E5E7CC2CD0} = {8E892062-96D4-4EE6-BEC9-05B364A80882}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6AA67659-FBF8-4978-8F42-097AFD66DDBE}

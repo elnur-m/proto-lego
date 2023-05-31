@@ -27,7 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Workflow.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Workflow.Tests.TestWorkflow", "tests\Proto.Lego.Workflow.Tests.TestWorkflow\Proto.Lego.Workflow.Tests.TestWorkflow.csproj", "{E8D188DD-666B-48C0-AEAF-D5D393FB7A55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proto.Lego.Persistence.Npgsql", "src\Proto.Lego.Persistence.Npgsql\Proto.Lego.Persistence.Npgsql.csproj", "{D39681A5-9BF3-4ED9-A687-B61CAD3CC6FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Persistence.Npgsql", "src\Proto.Lego.Persistence.Npgsql\Proto.Lego.Persistence.Npgsql.csproj", "{D39681A5-9BF3-4ED9-A687-B61CAD3CC6FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proto.Lego", "src\Proto.Lego\Proto.Lego.csproj", "{367BBEF7-925B-4FC5-B163-245239DC8574}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proto.Lego.Tests", "tests\Proto.Lego.Tests\Proto.Lego.Tests.csproj", "{D2865F77-D562-4190-85BA-F30625654758}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +85,14 @@ Global
 		{D39681A5-9BF3-4ED9-A687-B61CAD3CC6FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D39681A5-9BF3-4ED9-A687-B61CAD3CC6FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D39681A5-9BF3-4ED9-A687-B61CAD3CC6FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{367BBEF7-925B-4FC5-B163-245239DC8574}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{367BBEF7-925B-4FC5-B163-245239DC8574}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{367BBEF7-925B-4FC5-B163-245239DC8574}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{367BBEF7-925B-4FC5-B163-245239DC8574}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2865F77-D562-4190-85BA-F30625654758}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2865F77-D562-4190-85BA-F30625654758}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2865F77-D562-4190-85BA-F30625654758}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2865F77-D562-4190-85BA-F30625654758}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +104,7 @@ Global
 		{98E094B5-C7F8-4526-9E95-0E955D1ECC2D} = {19B55D56-FF5F-41A0-AD1F-A0C12E3840C9}
 		{065B1E30-9669-49AA-AADC-D8FDC9094C10} = {19B55D56-FF5F-41A0-AD1F-A0C12E3840C9}
 		{E8D188DD-666B-48C0-AEAF-D5D393FB7A55} = {19B55D56-FF5F-41A0-AD1F-A0C12E3840C9}
+		{D2865F77-D562-4190-85BA-F30625654758} = {19B55D56-FF5F-41A0-AD1F-A0C12E3840C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0941367C-457E-4C84-B8CB-09F9B5E6FC52}

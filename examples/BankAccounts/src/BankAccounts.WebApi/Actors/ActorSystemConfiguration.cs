@@ -9,6 +9,8 @@ using Proto.Cluster;
 using Proto.Cluster.Partition;
 using Proto.Cluster.Testing;
 using Proto.DependencyInjection;
+using Proto.Lego.Aggregate;
+using Proto.Lego.Workflow;
 using Proto.Remote;
 using Proto.Remote.GrpcNet;
 
@@ -29,8 +31,8 @@ public static class ActorSystemConfiguration
 
             var remoteConfig = GrpcNetRemoteConfig
                     .BindToLocalhost()
-                    .WithProtoMessages(Proto.Lego.Aggregate.Messages.MessagesReflection.Descriptor)
-                    .WithProtoMessages(Proto.Lego.Workflow.Messages.MessagesReflection.Descriptor)
+                    .WithProtoMessages(AggregateReflection.Descriptor)
+                    .WithProtoMessages(WorkflowReflection.Descriptor)
                     .WithProtoMessages(AccountAggregateReflection.Descriptor)
                     .WithProtoMessages(CreateAccountWorkflowReflection.Descriptor)
                     .WithProtoMessages(TransferFundsWorkflowReflection.Descriptor)

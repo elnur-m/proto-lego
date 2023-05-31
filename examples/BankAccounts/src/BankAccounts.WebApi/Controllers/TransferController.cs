@@ -1,11 +1,11 @@
 ﻿using BankAccounts.Workflows;
-using BankAccounts.Workflows.AddFunds;
 using BankAccounts.Workflows.TransferFunds;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Mvc;
 using Proto;
 using Proto.Cluster;
 using Proto.Lego.Persistence;
+using Proto.Lego.Workflow;
 
 namespace BankAccounts.WebApi.Controllers;
 
@@ -15,15 +15,15 @@ public class TransferController : AppControllerBase
 {
     private readonly ActorSystem _actorSystem;
 
-    public TransferController(ActorSystem actorSystem, IKeyValueStateStore stateStore) : base(stateStore)
+    public TransferController(ActorSystem actorSystem, IWorkflowStore workflowStore) : base(workflowStore)
     {
         _actorSystem = actorSystem;
     }
 
     [HttpPost("TransferFunds")]
-    public async Task<ActionResult<TransferFundsWorkflowState>> TransferFundsAsync([FromBody] TransferFundsRequest request)
+    public async Task<ActionResult<WorkflowResult>> TransferFundsAsync([FromBody] TransferFundsRequest request)
     {
-        var workflowState = new TransferFundsWorkflowState
+        var workflowState = new TransferFundsWorkflowInput
         {
             FromAccountId = request.FromAccountId,
             ToAccountId = request.ToAccountId,
@@ -38,9 +38,9 @@ public class TransferController : AppControllerBase
         );
 
         await Task.Delay(100);
-        var state = await GetWorkflowStateAsync<TransferFundsWorkflowState>(TransferFundsWorkflow.WorkflowKind, request.RequestId);
+        var result = await GetWorkflowResultAsync(TransferFundsWorkflow.WorkflowKind, request.RequestId);
 
-        return Ok(state);
+        return Ok(result);
     }
 }
 

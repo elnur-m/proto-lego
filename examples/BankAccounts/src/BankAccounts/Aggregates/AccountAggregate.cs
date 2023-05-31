@@ -1,8 +1,8 @@
 ﻿using BankAccounts.Aggregates.Account;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Logging;
+using Proto.Lego;
 using Proto.Lego.Aggregate;
-using Proto.Lego.Aggregate.Messages;
 using Proto.Lego.Persistence;
 
 namespace BankAccounts.Aggregates;
@@ -11,8 +11,8 @@ public class AccountAggregate : Aggregate<AccountAggregateState>
 {
     public const string AggregateKind = "AccountAggregate";
 
-    public AccountAggregate(IKeyValueStateStore stateStore, ILogger<Aggregate<AccountAggregateState>> logger)
-        : base(stateStore, logger)
+    public AccountAggregate(IAggregateStore store, ILogger<Aggregate<AccountAggregateState>> logger)
+        : base(store, logger)
     {
         Kind = AggregateKind;
     }

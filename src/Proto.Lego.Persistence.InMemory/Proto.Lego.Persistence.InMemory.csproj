@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Proto.Lego.Persistence\Proto.Lego.Persistence.csproj" />
+    <ProjectReference Include="..\Proto.Lego\Proto.Lego.csproj" />
   </ItemGroup>
 
 </Project>

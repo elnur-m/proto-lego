@@ -2,46 +2,37 @@
 using BankAccounts.Aggregates.Account;
 using BankAccounts.Workflows.AddFunds;
 using Microsoft.Extensions.Logging;
+using Proto.Lego;
 using Proto.Lego.Persistence;
-using Proto.Lego.Workflow;
 
 namespace BankAccounts.Workflows;
 
-public class AddFundsWorkflow : Workflow<AddFundsWorkflowState>
+public class AddFundsWorkflow : Workflow<AddFundsWorkflowInput>
 {
     public const string WorkflowKind = nameof(AddFundsWorkflow);
 
-    public AddFundsWorkflow(
-        IKeyValueStateStore stateStore,
-        IAliveWorkflowStore aliveWorkflowStore,
-        ILogger<Workflow<AddFundsWorkflowState>> logger
-    ) : base(stateStore, aliveWorkflowStore, logger)
+    public AddFundsWorkflow(IWorkflowStore store, ILogger<Workflow<AddFundsWorkflowInput>> logger
+    ) : base(store, logger)
     {
         Kind = WorkflowKind;
     }
 
-    protected override async Task ExecuteWorkflowAsync()
+    protected override async Task ExecuteWorkflowAsync(AddFundsWorkflowInput input)
     {
         var addFunds = new Add
         {
-            Amount = InnerState!.Amount
+            Amount = input.Amount
         };
 
-        var prepareResult = await PrepareAsync(AccountAggregate.AggregateKind, InnerState.AccountId, addFunds);
+        var prepareResult = await PrepareAsync(AccountAggregate.AggregateKind, input.AccountId, addFunds);
 
         if (!prepareResult.Success)
         {
-            InnerState.ErrorMessage = prepareResult.ErrorMessage;
+            State!.Result.ErrorMessages.Add(prepareResult.ErrorMessage);
             return;
         }
 
-        await ConfirmAsync(AccountAggregate.AggregateKind, InnerState.AccountId, addFunds);
-        InnerState.Succeeded = true;
-    }
-
-    protected override async Task CleanUpAsync()
-    {
-        await base.CleanUpAsync();
-        await RemoveFromAliveWorkflowStoreAsync();
+        await ConfirmAsync(AccountAggregate.AggregateKind, input.AccountId, addFunds);
+        State!.Result.Succeeded = true;
     }
 }

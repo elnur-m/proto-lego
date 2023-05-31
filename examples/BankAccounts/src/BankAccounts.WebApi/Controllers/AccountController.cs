@@ -7,8 +7,8 @@ using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Mvc;
 using Proto;
 using Proto.Cluster;
-using Proto.Lego.Aggregate.Messages;
 using Proto.Lego.Persistence;
+using Proto.Lego.Workflow;
 
 namespace BankAccounts.WebApi.Controllers;
 
@@ -17,18 +17,20 @@ namespace BankAccounts.WebApi.Controllers;
 public class AccountController : AppControllerBase
 {
     private readonly ActorSystem _actorSystem;
+    private readonly IAggregateStore _aggregateStore;
 
-    public AccountController(ActorSystem actorSystem, IKeyValueStateStore keyValueStateStore) : base(keyValueStateStore)
+    public AccountController(ActorSystem actorSystem, IWorkflowStore workflowStore, IAggregateStore aggregateStore) : base(workflowStore)
     {
         _actorSystem = actorSystem;
+        _aggregateStore = aggregateStore;
     }
 
     [HttpPost("CreateAccount")]
-    public async Task<ActionResult<CreateAccountWorkflowState>> CreateAccountAsync([FromBody] CreateAccountRequest request)
+    public async Task<ActionResult<WorkflowResult>> CreateAccountAsync([FromBody] CreateAccountRequest request)
     {
-        var workflowState = new CreateAccountWorkflowState
+        var workflowState = new CreateAccountWorkflowInput
         {
-            AccountId = Guid.NewGuid().ToString()
+            AccountId = request.AccountId
         };
 
         await _actorSystem.Cluster().RequestAsync<Empty>(
@@ -39,15 +41,15 @@ public class AccountController : AppControllerBase
         );
 
         await Task.Delay(100);
-        var state = await GetWorkflowStateAsync<CreateAccountWorkflowState>(CreateAccountWorkflow.WorkflowKind, request.RequestId);
+        var state = await GetWorkflowResultAsync(CreateAccountWorkflow.WorkflowKind, request.RequestId);
 
         return Ok(state);
     }
 
     [HttpPost("AddFunds")]
-    public async Task<ActionResult<AddFundsWorkflowState>> AddFundsAsync([FromBody] AddFundsRequest request)
+    public async Task<ActionResult<AddFundsWorkflowInput>> AddFundsAsync([FromBody] AddFundsRequest request)
     {
-        var workflowState = new AddFundsWorkflowState
+        var workflowState = new AddFundsWorkflowInput
         {
             AccountId = request.AccountId,
             Amount = request.Amount
@@ -61,7 +63,7 @@ public class AccountController : AppControllerBase
         );
 
         await Task.Delay(100);
-        var state = await GetWorkflowStateAsync<AddFundsWorkflowState>(AddFundsWorkflow.WorkflowKind, request.RequestId);
+        var state = await GetWorkflowResultAsync(AddFundsWorkflow.WorkflowKind, request.RequestId);
 
         return Ok(state);
     }
@@ -70,19 +72,17 @@ public class AccountController : AppControllerBase
     public async Task<ActionResult<AccountAggregateState>> GetAsync(string accountId)
     {
         var key = $"{AccountAggregate.AggregateKind}/{accountId}";
-        var stateWrapperBytes = await KeyValueStateStore.GetAsync(key);
+        var stateWrapper = await _aggregateStore.GetAsync(key);
 
-        if (stateWrapperBytes == null)
+        if (stateWrapper == null)
         {
             return NotFound();
         }
-
-        var stateWrapper = AggregateStateWrapper.Parser.ParseFrom(stateWrapperBytes);
         var state = stateWrapper.InnerState.Unpack<AccountAggregateState>();
 
         return Ok(state);
     }
 }
 
-public record CreateAccountRequest(string RequestId);
+public record CreateAccountRequest(string RequestId, string AccountId);
 public record AddFundsRequest(string RequestId, string AccountId, long Amount);

@@ -1,31 +1,29 @@
-﻿using Google.Protobuf;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Proto.Lego.Persistence;
-using Proto.Lego.Workflow.Messages;
+using Proto.Lego.Workflow;
 
 namespace BankAccounts.WebApi.Controllers;
 
 public abstract class AppControllerBase : ControllerBase
 {
-    protected readonly IKeyValueStateStore KeyValueStateStore;
+    protected readonly IWorkflowStore WorkflowStore;
 
-    protected AppControllerBase(IKeyValueStateStore keyValueStateStore)
+    protected AppControllerBase(IWorkflowStore workflowStore)
     {
-        KeyValueStateStore = keyValueStateStore;
+        WorkflowStore = workflowStore;
     }
 
-    protected async Task<TState?> GetWorkflowStateAsync<TState>(string kind, string id) where TState : class, IMessage, new()
+    protected async Task<WorkflowResult?> GetWorkflowResultAsync(string kind, string id)
     {
         var key = $"{kind}/{id}";
-        var wrapperBytes = await KeyValueStateStore.GetAsync(key);
-        if (wrapperBytes == null)
+        var state = await WorkflowStore.GetAsync(key);
+        if (state == null)
         {
             return null;
         }
 
-        var wrapper = WorkflowStateWrapper.Parser.ParseFrom(wrapperBytes);
-        var state = wrapper.InnerState.Unpack<TState>();
+        var result = state.Result;
 
-        return state;
+        return result;
     }
 }

@@ -1,10 +1,11 @@
-﻿CREATE TABLE key_value_states
+﻿CREATE TABLE aggregates
 (
 	key VARCHAR(500) PRIMARY KEY,
 	value BYTEA
 );
 
-CREATE TABLE alive_workflows
+CREATE TABLE workflows
 (
-	key VARCHAR(500) PRIMARY KEY
+	key VARCHAR(500) PRIMARY KEY,
+	value BYTEA
 );

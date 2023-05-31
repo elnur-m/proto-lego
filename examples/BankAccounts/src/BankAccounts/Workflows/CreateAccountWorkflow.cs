@@ -2,41 +2,39 @@
 using BankAccounts.Aggregates.Account;
 using BankAccounts.Workflows.CreateAccount;
 using Microsoft.Extensions.Logging;
+using Proto.Lego;
 using Proto.Lego.Persistence;
-using Proto.Lego.Workflow;
 
 namespace BankAccounts.Workflows;
 
-public class CreateAccountWorkflow : Workflow<CreateAccountWorkflowState>
+public class CreateAccountWorkflow : Workflow<CreateAccountWorkflowInput>
 {
     public const string WorkflowKind = nameof(CreateAccountWorkflow);
 
-    public CreateAccountWorkflow(
-        IKeyValueStateStore stateStore,
-        IAliveWorkflowStore aliveWorkflowStore,
-        ILogger<Workflow<CreateAccountWorkflowState>> logger
-    ) : base(stateStore, aliveWorkflowStore, logger)
+    public CreateAccountWorkflow(IWorkflowStore store, ILogger<Workflow<CreateAccountWorkflowInput>> logger
+    ) : base(store, logger)
     {
         Kind = WorkflowKind;
     }
 
-    protected override async Task ExecuteWorkflowAsync()
+    protected override async Task ExecuteWorkflowAsync(CreateAccountWorkflowInput input)
     {
-        var result = await ExecuteAsync(AccountAggregate.AggregateKind, InnerState!.AccountId, new Create());
+        Logger.LogInformation($"Entering Execute for {Key}");
+
+        var result = await ExecuteAsync(AccountAggregate.AggregateKind, input.AccountId, new Create());
 
         if (result.Success)
         {
-            InnerState.Succeeded = true;
+            State!.Result.Succeeded = true;
         }
         else
         {
-            InnerState.ErrorMessage = result.ErrorMessage;
+            State!.Result.ErrorMessages.Add(result.ErrorMessage);
         }
     }
 
-    protected override async Task CleanUpAsync()
+    protected override async Task BeforeCleanUpAsync()
     {
-        await base.CleanUpAsync();
-        await RemoveFromAliveWorkflowStoreAsync();
+        await Task.Delay(5000);
     }
 }
