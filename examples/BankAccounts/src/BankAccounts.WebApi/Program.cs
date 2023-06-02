@@ -41,26 +41,6 @@ public class Program
 
         app.Services.UseWorkflowTriggering();
 
-        //var actorSystem = app.Services.GetRequiredService<ActorSystem>();
-        //var cluster = actorSystem.Cluster();
-
-        //actorSystem.EventStream.Subscribe<ClusterTopology>(async topology =>
-        //{
-        //    Console.WriteLine($"Topology first address: {topology.Members.OrderBy(x => x.ToString()).First().Address}");
-        //    Console.WriteLine($"ActorSystem address: {actorSystem.Address}");
-
-        //    if (topology.Members.Any())
-        //    {
-        //        await workflowStore.ActOnAllAsync(async (key, state) =>
-        //        {
-        //            var split = key.Split('/');
-        //            var kind = string.Join('/', split.Take(split.Length - 1));
-        //            var identity = split.Last();
-        //            await cluster.RequestAsync<object>(identity, kind, new Trigger(), CancellationToken.None);
-        //        });
-        //    }
-        //});
-
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
