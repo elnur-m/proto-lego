@@ -75,7 +75,7 @@ It will just reply to the Workflow with the message that it had replied with bef
 
 ### Lifecycle
 Basically an Aggregate always exists. So if you're implementing something like a bank account and need to make sure that the accounts participating in a transfer transaction are existing
-you need to explicitly handle it on the business level. Storing something like a ```Exists``` property in the Aggregate's TState might be enough.
+you need to explicitly handle it on the business level. Storing something like an ```Exists``` property in the Aggregate's ```TState``` might be enough.
 That's pretty much it, the Aggregate always exists.
 
 ### Useful bits
