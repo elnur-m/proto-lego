@@ -5,6 +5,12 @@ Account serves to hold the balance of a person. The goals of workflows are prett
 - Add funds worfklow
 - Transfer funds workflow
 
+## Setup
+You need a Postrgesql database to run this project on your local.
+- Execute the sql in [script.sql](https://github.com/elnur-m/proto-lego/blob/master/src/Proto.Lego.Persistence.Npgsql/Database/scripts.sql) on your db
+- Add the connection string for that db into [appsettings.Development.json](https://github.com/elnur-m/proto-lego/blob/master/examples/BankAccounts/src/BankAccounts.WebApi/appsettings.Development.json)'s ConnectionStrings section as "Postgresql"
+
+That should be it. Run the **BankAccounts.WebApi** app.
 
 ## The rules
 First, you need to create an account by calling the respective endpoint. Then you need to add funds. And then you can transfer these funds to some other (existing) account.
