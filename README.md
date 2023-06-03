@@ -19,7 +19,7 @@ As the paper says, we operate based on 3 assumptions:
 - Scalable applications use multiple disjoint scopes of transactional serializability instead of global transactional serializability
 - Scalable applications use at-least-once messaging
 
-Proto.Lego is built upon Proto.Actor which serves as the lower scale-aware level based on actor model.
+Proto.Lego is built upon [**Proto.Actor**](https://github.com/asynkron/protoactor-dotnet) which serves as the lower scale-aware level based on actor model.
 The upper level of a Proto.Lego app consists of 2 kinds of virtual actors: **Aggregates** and **Workflows**. Both Aggregates and Workflows are
 implemented using virtual actors.
 
