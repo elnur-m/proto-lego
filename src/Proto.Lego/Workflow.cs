@@ -22,6 +22,7 @@ public abstract class Workflow<TInput> : IActor where TInput : IMessage, new()
     private IContext? _context;
 
     private readonly Dictionary<string, long> _sequences = new();
+    private readonly List<PID> _completedStateSubscribers = new();
     private bool _hasPersistedState;
     private bool _isExecuting;
     private bool _isCleaningUp;
@@ -64,6 +65,15 @@ public abstract class Workflow<TInput> : IActor where TInput : IMessage, new()
 
             case GetCurrentState:
                 HandleGetCurrentState();
+                break;
+
+            case GetStateWhenCompleted:
+                if (State == null)
+                {
+                    _context!.Send(_context.Sender!, new Empty());
+                    return;
+                }
+                HandleGetStateWhenCompleted();
                 break;
         }
     }
@@ -130,6 +140,8 @@ public abstract class Workflow<TInput> : IActor where TInput : IMessage, new()
             {
                 _isExecuting = false;
                 State.Result.Completed = true;
+                _completedStateSubscribers.ForEach(x => _context.Send(x, State));
+                _completedStateSubscribers.Clear();
                 PersistStateAsync().GetAwaiter().GetResult();
                 CleanUpInBackground();
 
@@ -307,6 +319,18 @@ public abstract class Workflow<TInput> : IActor where TInput : IMessage, new()
 
     private void HandleGetCurrentState()
     {
-        _context!.Send(_context.Sender!, State!);
+        _context!.Send(_context.Sender!, State == null ? new Empty() : State);
+    }
+
+    private void HandleGetStateWhenCompleted()
+    {
+        if (State!.Result.Completed)
+        {
+            _context!.Send(_context.Sender!, State!);
+        }
+        else
+        {
+            _completedStateSubscribers.Add(_context!.Sender!);
+        }
     }
 }

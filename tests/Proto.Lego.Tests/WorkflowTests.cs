@@ -1,3 +1,4 @@
+using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,6 +10,7 @@ using Proto.Lego.Persistence.InMemory;
 using Proto.Lego.Tests.Aggregates;
 using Proto.Lego.Tests.Setup;
 using Proto.Lego.Tests.Workflows;
+using Proto.Lego.Workflow;
 using Shouldly;
 using Xunit.Abstractions;
 
@@ -157,6 +159,121 @@ public class WorkflowTests : IAsyncDisposable, IClassFixture<InMemoryAggregateSt
 
         aggregateTwoStateWrapper.ShouldNotBeNull();
         aggregateTwoStateWrapper.WorkflowStates.ShouldNotContainKey(workflowId);
+    }
+
+    [Fact]
+    public async Task GetCurrentStateAsync_ReturnsCurrentState()
+    {
+        var workflowId = Guid.NewGuid().ToString();
+
+        var input = new TestWorkflowInput
+        {
+            AggregateOneId = Guid.NewGuid().ToString(),
+            AggregateTwoId = Guid.NewGuid().ToString(),
+            ResultToReturnOne = true,
+            ResultToReturnTwo = true,
+            StringToSave = "test",
+        };
+
+        await RequestWorkflowAsync(workflowId, input);
+
+        var state = await Cluster.RequestAsync<WorkflowState>(
+            kind: TestWorkflow.WorkflowKind,
+            identity: workflowId,
+            message: new GetCurrentState(),
+            ct: CancellationToken.None
+        );
+
+        state.ShouldNotBe(new WorkflowState());
+    }
+
+    [Fact]
+    public async Task GetCurrentStateAsync_WhenNotInitialized_ReturnsEmpty()
+    {
+        var workflowId = Guid.NewGuid().ToString();
+
+        var state = await Cluster.RequestAsync<IMessage>(
+            kind: TestWorkflow.WorkflowKind,
+            identity: workflowId,
+            message: new GetCurrentState(),
+            ct: CancellationToken.None
+        );
+
+        state.ShouldBe(new Empty());
+    }
+
+    [Fact]
+    public async Task GetStateWhenCompletedAsync_ReturnsStateWhenCompleted()
+    {
+        var workflowId = Guid.NewGuid().ToString();
+
+        var input = new TestWorkflowInput
+        {
+            AggregateOneId = Guid.NewGuid().ToString(),
+            AggregateTwoId = Guid.NewGuid().ToString(),
+            ResultToReturnOne = true,
+            ResultToReturnTwo = true,
+            StringToSave = "test",
+        };
+
+        await RequestWorkflowAsync(workflowId, input);
+
+        var state = await Cluster.RequestAsync<WorkflowState>(
+            kind: TestWorkflow.WorkflowKind,
+            identity: workflowId,
+            message: new GetCurrentState(),
+            ct: CancellationToken.None
+        );
+
+        state.ShouldNotBe(new WorkflowState());
+    }
+
+    [Fact]
+    public async Task GetStateWhenCompletedAsync_WhenMultipleRequests_ReturnsStateToAllOfThemWhenCompleted()
+    {
+        var workflowId = Guid.NewGuid().ToString();
+
+        var input = new TestWorkflowInput
+        {
+            AggregateOneId = Guid.NewGuid().ToString(),
+            AggregateTwoId = Guid.NewGuid().ToString(),
+            ResultToReturnOne = true,
+            ResultToReturnTwo = true,
+            StringToSave = "test",
+        };
+
+        await RequestWorkflowAsync(workflowId, input);
+
+        var requests = 5;
+
+        var requestTasks = Enumerable.Range(1, requests).Select(x => Cluster.RequestAsync<WorkflowState>(
+            kind: TestWorkflow.WorkflowKind,
+            identity: workflowId,
+            message: new GetCurrentState(),
+            ct: CancellationToken.None
+        ));
+
+        var states = await Task.WhenAll(requestTasks);
+
+        foreach (var state in states)
+        {
+            state.ShouldNotBe(new WorkflowState());
+        }
+    }
+
+    [Fact]
+    public async Task GetStateWhenCompletedAsync_WhenNotInitialized_ReturnsEmpty()
+    {
+        var workflowId = Guid.NewGuid().ToString();
+
+        var state = await Cluster.RequestAsync<IMessage>(
+            kind: TestWorkflow.WorkflowKind,
+            identity: workflowId,
+            message: new GetStateWhenCompleted(),
+            ct: CancellationToken.None
+        );
+
+        state.ShouldBe(new Empty());
     }
 
     private async Task RequestWorkflowAsync(string workflowId, TestWorkflowInput input)

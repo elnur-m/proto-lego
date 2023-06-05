@@ -47,4 +47,9 @@ public class TestWorkflow : Workflow<TestWorkflowInput>
             await Task.WhenAll(cancelOneTask, cancelTwoTask);
         }
     }
+
+    protected override async Task BeforeCleanUpAsync()
+    {
+        await Task.Delay(3000);
+    }
 }

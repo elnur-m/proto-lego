@@ -1,10 +1,11 @@
-﻿using Proto.Lego.Aggregate;
+﻿using System.Collections.Concurrent;
+using Proto.Lego.Aggregate;
 
 namespace Proto.Lego.Persistence.InMemory;
 
 public class InMemoryAggregateStore : IAggregateStore
 {
-    private readonly Dictionary<string, AggregateStateWrapper> _aggregates = new();
+    private readonly ConcurrentDictionary<string, AggregateStateWrapper> _aggregates = new();
 
     public Task<AggregateStateWrapper?> GetAsync(string key)
     {
@@ -19,7 +20,7 @@ public class InMemoryAggregateStore : IAggregateStore
 
     public Task DeleteAsync(string key)
     {
-        _aggregates.Remove(key);
+        _aggregates.Remove(key, out _);
         return Task.CompletedTask;
     }
 }

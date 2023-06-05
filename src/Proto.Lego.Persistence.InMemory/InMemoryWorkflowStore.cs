@@ -1,10 +1,11 @@
-﻿using Proto.Lego.Workflow;
+﻿using System.Collections.Concurrent;
+using Proto.Lego.Workflow;
 
 namespace Proto.Lego.Persistence.InMemory;
 
 public class InMemoryWorkflowStore : IWorkflowStore
 {
-    private readonly Dictionary<string, WorkflowState> _workflows = new();
+    private readonly ConcurrentDictionary<string, WorkflowState> _workflows = new();
 
     public Task<WorkflowState?> GetAsync(string key)
     {
@@ -19,7 +20,7 @@ public class InMemoryWorkflowStore : IWorkflowStore
 
     public Task DeleteAsync(string key)
     {
-        _workflows.Remove(key);
+        _workflows.Remove(key, out _);
         return Task.CompletedTask;
     }
 
