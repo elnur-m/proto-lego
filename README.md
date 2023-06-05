@@ -45,7 +45,7 @@ There is 1 more operation type which is Execute, but it's there for basically be
 ### Overview
 Workflows are basically durable functions. When triggered with a message containing input, they first persist their state to the WorkflowStore
 and then execute whatever is written in their ExecuteAsync method. On errors they retry. On any topology changes (new node added, process failed, etc)
-```app.Services.UseWorkflowTriggering()``` makes sure that one of the nodes participating in the cluster triggers all the workflows in the WorkflowState
+```app.Services.UseWorkflowTriggering()``` makes sure that one of the nodes participating in the cluster triggers all the workflows in the WorkflowStore
 so that they wake up and start executing if needed.
 
 ### Lifecycle
