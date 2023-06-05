@@ -56,4 +56,9 @@ public class TransferFundsWorkflow : Workflow<TransferFundsWorkflowInput>
 
         State!.Result.Succeeded = true;
     }
+
+    protected override async Task BeforeCleanUpAsync()
+    {
+        await Task.Delay(5000);
+    }
 }

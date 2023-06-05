@@ -1,26 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Proto.Lego.Persistence;
+using Proto;
+using Proto.Cluster;
 using Proto.Lego.Workflow;
 
 namespace BankAccounts.WebApi.Controllers;
 
 public abstract class AppControllerBase : ControllerBase
 {
-    protected readonly IWorkflowStore WorkflowStore;
+    protected readonly ActorSystem ActorSystem;
 
-    protected AppControllerBase(IWorkflowStore workflowStore)
+    protected AppControllerBase(ActorSystem actorSystem)
     {
-        WorkflowStore = workflowStore;
+        ActorSystem = actorSystem;
     }
 
     protected async Task<WorkflowResult?> GetWorkflowResultAsync(string kind, string id)
     {
-        var key = $"{kind}/{id}";
-        var state = await WorkflowStore.GetAsync(key);
-        if (state == null)
-        {
-            return null;
-        }
+        var state = await ActorSystem.Cluster().RequestAsync<WorkflowState>(
+            kind: kind,
+            identity: id,
+            message: new GetStateWhenCompleted(),
+            ct: CancellationToken.None
+        );
 
         var result = state.Result;
 

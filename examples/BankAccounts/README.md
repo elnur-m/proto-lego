@@ -15,9 +15,7 @@ That should be it. Run the **BankAccounts.WebApi** app.
 ## The rules
 First, you need to create an account by calling the respective endpoint. Then you need to add funds. And then you can transfer these funds to some other (existing) account.
 Basically, to be able to transfer funds both accounts need to be created and the sender needs to have enough funds on his/her balance.
-
 The RequestId field on the request models gets mapped to Workflow's id. This is done so that the client can retry the request with the same id in case of network issues.
-In a real world app the workflows would send the result via a message queue or sockets, but to keep this example simple we're just going to wait for 100ms and query the state from the db.
 
 ## Implementation of the protocol
 As you may have noticed the agregates handle Prepare, Confirm, Cancel and Execute operations. This is done to cope with lack of atomicity accross aggregate boundaries.

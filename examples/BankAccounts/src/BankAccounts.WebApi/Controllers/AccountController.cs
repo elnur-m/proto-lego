@@ -16,12 +16,10 @@ namespace BankAccounts.WebApi.Controllers;
 [Route("api/[controller]")]
 public class AccountController : AppControllerBase
 {
-    private readonly ActorSystem _actorSystem;
     private readonly IAggregateStore _aggregateStore;
 
-    public AccountController(ActorSystem actorSystem, IWorkflowStore workflowStore, IAggregateStore aggregateStore) : base(workflowStore)
+    public AccountController(ActorSystem actorSystem, IAggregateStore aggregateStore) : base(actorSystem)
     {
-        _actorSystem = actorSystem;
         _aggregateStore = aggregateStore;
     }
 
@@ -33,23 +31,14 @@ public class AccountController : AppControllerBase
             AccountId = request.AccountId
         };
 
-        await _actorSystem.Cluster().RequestAsync<Empty>(
+        await ActorSystem.Cluster().RequestAsync<Empty>(
             kind: CreateAccountWorkflow.WorkflowKind,
             identity: request.RequestId,
             message: workflowState,
             ct: CancellationToken.None
         );
 
-        await Task.Delay(100);
-        //var state = await GetWorkflowResultAsync(CreateAccountWorkflow.WorkflowKind, request.RequestId);
-        var state = await _actorSystem.Cluster().RequestAsync<WorkflowState>(
-            kind: CreateAccountWorkflow.WorkflowKind,
-            identity: request.RequestId,
-            message: new GetCurrentState(),
-            ct: CancellationToken.None
-        );
-
-        var result = state.Result;
+        var result = await GetWorkflowResultAsync(CreateAccountWorkflow.WorkflowKind, request.RequestId);
 
         return Ok(result);
     }
@@ -63,14 +52,13 @@ public class AccountController : AppControllerBase
             Amount = request.Amount
         };
 
-        await _actorSystem.Cluster().RequestAsync<Empty>(
+        await ActorSystem.Cluster().RequestAsync<Empty>(
             kind: AddFundsWorkflow.WorkflowKind,
             identity: request.RequestId,
             message: workflowState,
             ct: CancellationToken.None
         );
 
-        await Task.Delay(100);
         var state = await GetWorkflowResultAsync(AddFundsWorkflow.WorkflowKind, request.RequestId);
 
         return Ok(state);
