@@ -41,9 +41,17 @@ public class AccountController : AppControllerBase
         );
 
         await Task.Delay(100);
-        var state = await GetWorkflowResultAsync(CreateAccountWorkflow.WorkflowKind, request.RequestId);
+        //var state = await GetWorkflowResultAsync(CreateAccountWorkflow.WorkflowKind, request.RequestId);
+        var state = await _actorSystem.Cluster().RequestAsync<WorkflowState>(
+            kind: CreateAccountWorkflow.WorkflowKind,
+            identity: request.RequestId,
+            message: new GetCurrentState(),
+            ct: CancellationToken.None
+        );
 
-        return Ok(state);
+        var result = state.Result;
+
+        return Ok(result);
     }
 
     [HttpPost("AddFunds")]

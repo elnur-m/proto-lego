@@ -8,6 +8,10 @@ message Trigger {
 
 }
 
+message GetCurrentState {
+
+}
+
 message WorkflowState {
 	WorkflowResult result = 1;
 	repeated string aggregates_to_clean_up = 2;
