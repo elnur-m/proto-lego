@@ -25,6 +25,7 @@ public abstract class Workflow<TInput> : IActor where TInput : IMessage, new()
     private bool _hasPersistedState;
     private bool _isExecuting;
     private bool _isCleaningUp;
+    private bool IsBusy => _isExecuting || _isCleaningUp;
 
     protected Workflow(IWorkflowStore store, ILogger<Workflow<TInput>> logger)
     {
@@ -37,12 +38,6 @@ public abstract class Workflow<TInput> : IActor where TInput : IMessage, new()
         Logger.LogDebug("{self} received {message}", Key, context.Message);
         _context = context;
 
-        if (_isExecuting || _isCleaningUp)
-        {
-            _context!.Send(_context.Sender!, new Empty());
-            return;
-        }
-
         switch (context.Message)
         {
             case Started:
@@ -52,12 +47,23 @@ public abstract class Workflow<TInput> : IActor where TInput : IMessage, new()
 
             case Trigger:
                 _context!.Send(_context.Sender!, new Empty());
-                ExecuteInBackground(State!.Input.Unpack<TInput>());
+                if (!IsBusy)
+                {
+                    ExecuteInBackground(State!.Input.Unpack<TInput>());
+                }
                 break;
 
             case TInput rawInput:
-                await TryInitializeAsync(rawInput);
-                ExecuteInBackground(rawInput);
+                if (!IsBusy)
+                {
+                    await TryInitializeAsync(rawInput);
+                    ExecuteInBackground(rawInput);
+                }
+                _context!.Send(_context.Sender!, new Empty());
+                break;
+
+            case GetCurrentState:
+                HandleGetCurrentState();
                 break;
         }
     }
@@ -191,8 +197,6 @@ public abstract class Workflow<TInput> : IActor where TInput : IMessage, new()
             _hasPersistedState = true;
         }
 
-        _context!.Send(_context.Sender!, new Empty());
-
         Logger.LogDebug("{self} exited TryInitializeAsync", Key);
     }
 
@@ -299,5 +303,10 @@ public abstract class Workflow<TInput> : IActor where TInput : IMessage, new()
         var kind = string.Join("/", parts.Take(parts.Length - 1));
         var id = parts.Last();
         return (kind, id);
+    }
+
+    private void HandleGetCurrentState()
+    {
+        _context!.Send(_context.Sender!, State!);
     }
 }
