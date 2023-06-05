@@ -19,8 +19,8 @@ As the paper says, we operate based on 3 assumptions:
 - Scalable applications use multiple disjoint scopes of transactional serializability instead of global transactional serializability
 - Scalable applications use at-least-once messaging
 
-Proto.Lego is built upon Proto.Actor which serves as the lower scale-aware level based on actor model.
-The upper level of a Proto.Lego app consists of 2 kinds of virtual actors: **Aggregates** and **Workflows**. Both Aggregates and Workflows are
+Proto.Lego is built upon [**Proto.Actor**](https://github.com/asynkron/protoactor-dotnet) which serves as the lower scale-aware level based on actor model.
+The upper level of a Proto.Lego app consists of 2 kinds of components: **Aggregates** and **Workflows**. Both Aggregates and Workflows are
 implemented using virtual actors.
 
 ### Components
@@ -75,7 +75,7 @@ It will just reply to the Workflow with the message that it had replied with bef
 
 ### Lifecycle
 Basically an Aggregate always exists. So if you're implementing something like a bank account and need to make sure that the accounts participating in a transfer transaction are existing
-you need to explicitly handle it on the business level. Storing something like a ```Exists``` property in the Aggregate's TState might be enough.
+you need to explicitly handle it on the business level. Storing something like an ```Exists``` property in the Aggregate's ```TState``` might be enough.
 That's pretty much it, the Aggregate always exists.
 
 ### Useful bits
