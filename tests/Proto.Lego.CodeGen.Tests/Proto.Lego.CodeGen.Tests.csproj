@@ -9,6 +9,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Protos\test_workflow.proto" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Grpc.Tools" Version="2.54.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -36,7 +40,9 @@
 
 	<ItemGroup>
 		<Protobuf Include="Protos/test_aggregate.proto" GrpcServices="None" AdditionalImportDirs=".;" />
+		<Protobuf Include="Protos/test_workflow.proto" GrpcServices="None" AdditionalImportDirs=".;" />
 		<ProtoGrain Include="Protos/test_aggregate.proto" GrpcServices="None" TemplateFiles="../../src/Proto.Lego.CodeGen/aggregate_template.txt" AdditionalImportDirs=".;" />
+		<ProtoGrain Include="Protos/test_workflow.proto" GrpcServices="None" TemplateFiles="../../src/Proto.Lego.CodeGen/workflow_template.txt" AdditionalImportDirs=".;" />
 	</ItemGroup>
 
 </Project>

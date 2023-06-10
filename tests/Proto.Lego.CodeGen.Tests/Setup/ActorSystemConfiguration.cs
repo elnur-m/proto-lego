@@ -5,6 +5,7 @@ using Proto.Cluster.Testing;
 using Proto.DependencyInjection;
 using Proto.Lego.AggregateGrain;
 using Proto.Lego.CodeGen.Tests.Aggregates;
+using Proto.Lego.CodeGen.Tests.Workflows;
 using Proto.Lego.Workflow;
 using Proto.Remote;
 using Proto.Remote.GrpcNet;
@@ -29,6 +30,7 @@ public static class ActorSystemConfiguration
                     .WithProtoMessages(AggregateGrainReflection.Descriptor)
                     .WithProtoMessages(WorkflowReflection.Descriptor)
                     .WithProtoMessages(TestAggregateReflection.Descriptor)
+                    .WithProtoMessages(TestWorkflowReflection.Descriptor)
                 ;
 
             // cluster configuration
@@ -44,10 +46,11 @@ public static class ActorSystemConfiguration
                         Props.FromProducer(() => new TestAggregateActor((context, identity) =>
                             ActivatorUtilities.CreateInstance<TestAggregate>(provider, context, identity)))
                     )
-                //.WithClusterKind(
-                //    kind: TestWorkflow.WorkflowKind,
-                //    Props.FromProducer(() => ActivatorUtilities.CreateInstance<TestWorkflow>(provider))
-                //)
+                    .WithClusterKind(
+                        kind: TestWorkflowActor.Kind,
+                        Props.FromProducer(() => new TestWorkflowActor((context, identity) =>
+                            ActivatorUtilities.CreateInstance<TestWorkflow>(provider, context, identity)))
+                    )
                 ;
 
             // create the actor system
