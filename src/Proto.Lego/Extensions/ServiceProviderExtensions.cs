@@ -30,7 +30,7 @@ public static class ServiceProviderExtensions
                 var split = key.Split('/');
                 var kind = string.Join('/', split.Take(split.Length - 1));
                 var identity = split.Last();
-                await cluster.RequestAsync<object>(identity, kind, new Trigger(), CancellationToken.None);
+                await cluster.RequestAsync<WorkflowResult>(identity, kind, new Trigger(), CancellationToken.None);
             });
         });
     }

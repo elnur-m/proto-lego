@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Google.Protobuf.WellKnownTypes;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Proto.Cluster;
@@ -88,6 +89,35 @@ public class WorkflowTests : IAsyncDisposable, IClassFixture<InMemoryAggregateSt
 
         var stateAfterCleared = await GetWorkflowStateAsync(workflowId);
         stateAfterCleared.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task Trigger_ExecutesWorkflow()
+    {
+        var workflowId = Guid.NewGuid().ToString();
+        var state = new WorkflowState
+        {
+            Input = Any.Pack(new TestWorkflowInput
+            {
+                AggregateOneId = Guid.NewGuid().ToString(),
+                AggregateTwoId = Guid.NewGuid().ToString(),
+                StringToSave = Guid.NewGuid().ToString()
+            })
+        };
+
+        var persistenceId = $"{TestWorkflowActor.Kind}/{workflowId}";
+
+        await WorkflowStore.SetAsync(persistenceId, state);
+
+        var result = await Cluster
+            .RequestAsync<WorkflowResult>(
+                kind: TestWorkflowActor.Kind,
+                identity: workflowId,
+                message: new Trigger(),
+                ct: CancellationToken.None
+            );
+
+        result.ShouldNotBeNull();
     }
 
     private async Task<AggregateStateWrapper?> GetAggregateStateWrapperAsync(string testAggregateId)
