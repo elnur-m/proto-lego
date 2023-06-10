@@ -19,8 +19,4 @@
 		<Protobuf Include="Proto/*.proto" GrpcServices="None" AdditionalImportDirs=".;" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Remove="Proto\workflow.proto" />
-	</ItemGroup>
-
 </Project>

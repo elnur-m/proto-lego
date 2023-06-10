@@ -1,0 +1,33 @@
+﻿syntax = "proto3";
+package Proto.Lego.AggregateGrain;
+option csharp_namespace = "Proto.Lego.AggregateGrain";
+
+import "google/protobuf/any.proto";
+
+message Operation {
+	string caller_id = 1;
+	int64 sequence = 2;
+	google.protobuf.Any action = 3;
+}
+
+message OperationResponse {
+	bool success = 1;
+	string error_message = 2;
+}
+
+message WipeCallerState {
+	string caller_id = 1;
+}
+
+//State
+
+message AggregateGrainStateWrapper {
+	map<string,CallerCommunicationState> caller_states = 1;
+	google.protobuf.Any inner_state = 2;
+}
+
+message CallerCommunicationState {
+	int64 sequence = 1;
+	map<int64,OperationResponse> responses = 2;
+	repeated google.protobuf.Any prepared_actions = 3;
+}
