@@ -34,7 +34,7 @@ namespace {{CsNamespace}}
         protected string Key => PersistenceId;
         protected abstract TimeSpan ClearAfter { get; }
 
-        protected WorkflowState? State;
+        public WorkflowState? State;
         private readonly Dictionary<string, long> _sequences = new();
 
         protected {{Name}}Base(IContext context, ClusterIdentity clusterIdentity, IWorkflowStore store)
@@ -262,6 +262,9 @@ namespace {{CsNamespace}}
                 case ReceiveTimeout:
                     await _inner!.ClearAsync();
                     break;
+                case Trigger:
+                    await _inner!.Execute(_inner.State!.Input.Unpack<{{Name}}Input>(), Respond, OnError);
+                break;
                 case GrainRequestMessage(var methodIndex, var r):
                 {
                     switch (methodIndex)
