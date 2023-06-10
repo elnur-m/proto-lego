@@ -19,6 +19,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego", "src\Proto.Leg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Tests", "tests\Proto.Lego.Tests\Proto.Lego.Tests.csproj", "{D2865F77-D562-4190-85BA-F30625654758}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proto.Lego.CodeGen", "src\Proto.Lego.CodeGen\Proto.Lego.CodeGen.csproj", "{1EEF876B-C40A-4647-BA29-3DA553736558}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proto.Lego.CodeGen.Tests", "tests\Proto.Lego.CodeGen.Tests\Proto.Lego.CodeGen.Tests.csproj", "{72E9D53D-B793-4D47-ACD3-E64B93F15E23}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{D2865F77-D562-4190-85BA-F30625654758}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2865F77-D562-4190-85BA-F30625654758}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2865F77-D562-4190-85BA-F30625654758}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EEF876B-C40A-4647-BA29-3DA553736558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EEF876B-C40A-4647-BA29-3DA553736558}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EEF876B-C40A-4647-BA29-3DA553736558}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EEF876B-C40A-4647-BA29-3DA553736558}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72E9D53D-B793-4D47-ACD3-E64B93F15E23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72E9D53D-B793-4D47-ACD3-E64B93F15E23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72E9D53D-B793-4D47-ACD3-E64B93F15E23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72E9D53D-B793-4D47-ACD3-E64B93F15E23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +71,7 @@ Global
 		{DE9542B3-FCD2-4E4F-AF8C-F143054A1D40} = {19B55D56-FF5F-41A0-AD1F-A0C12E3840C9}
 		{98E094B5-C7F8-4526-9E95-0E955D1ECC2D} = {19B55D56-FF5F-41A0-AD1F-A0C12E3840C9}
 		{D2865F77-D562-4190-85BA-F30625654758} = {19B55D56-FF5F-41A0-AD1F-A0C12E3840C9}
+		{72E9D53D-B793-4D47-ACD3-E64B93F15E23} = {19B55D56-FF5F-41A0-AD1F-A0C12E3840C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0941367C-457E-4C84-B8CB-09F9B5E6FC52}
