@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Proto.Lego.CodeGen.Tests;
 
-public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateGrainStore>, IClassFixture<InMemoryWorkflowStore>
+public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateGrainStore>
 {
     private readonly IHost _host;
 
@@ -22,8 +22,7 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateG
 
     public AggregateTests(
         ITestOutputHelper outputHelper,
-        InMemoryAggregateGrainStore aggregateStore,
-        InMemoryWorkflowStore workflowStore
+        InMemoryAggregateGrainStore aggregateStore
     )
     {
         var hostBuilder = Host.CreateDefaultBuilder();
@@ -33,7 +32,6 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateG
             services.AddActorSystem("AggregateTests");
             services.AddHostedService<ActorSystemClusterHostedService>();
             services.AddSingleton<IAggregateGrainStore>(aggregateStore);
-            services.AddSingleton<IWorkflowStore>(workflowStore);
         });
 
         hostBuilder.ConfigureLogging(builder =>

@@ -1,0 +1,17 @@
+﻿syntax = "proto3";
+package Proto.Lego.WorkflowGrain;
+option csharp_namespace = "Proto.Lego.WorkflowGrain";
+
+import "google/protobuf/any.proto";
+
+message WorkflowGrainState {
+	bool completed = 1;
+	WorkflowResult result = 2;
+	repeated string aggregates_to_clean_up = 3;
+	google.protobuf.Any input = 4;
+}
+
+message WorkflowResult {
+	bool succeeded = 1;
+	repeated string error_messages = 2;
+}
