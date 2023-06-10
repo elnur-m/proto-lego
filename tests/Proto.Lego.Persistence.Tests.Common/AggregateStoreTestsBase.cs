@@ -89,7 +89,7 @@ public abstract class AggregateStoreTestsBase
 
         for (int i = 0; i < workflowsNum; i++)
         {
-            state.WorkflowStates.Add(i.ToString(), new WorkflowCommunicationState
+            state.CallerStates.Add(i.ToString(), new CallerCommunicationState
             {
                 Sequence = Random.Shared.Next(1, 10)
             });

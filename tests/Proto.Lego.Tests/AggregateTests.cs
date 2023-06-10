@@ -1,4 +1,4 @@
-﻿using Google.Protobuf.WellKnownTypes;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -13,27 +13,25 @@ using Xunit.Abstractions;
 
 namespace Proto.Lego.Tests;
 
-public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateStore>, IClassFixture<InMemoryWorkflowStore>
+public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateStore>
 {
     private readonly IHost _host;
 
     private Cluster.Cluster Cluster => _host.Services.GetRequiredService<ActorSystem>().Cluster();
-    private IAggregateStore KeyValueStateStore => _host.Services.GetRequiredService<IAggregateStore>();
+    private IAggregateStore AggregateStore => _host.Services.GetRequiredService<IAggregateStore>();
 
     public AggregateTests(
         ITestOutputHelper outputHelper,
-        InMemoryAggregateStore aggregateStore,
-        InMemoryWorkflowStore workflowStore
+        InMemoryAggregateStore aggregateStore
     )
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
         hostBuilder.ConfigureServices(services =>
         {
-            services.AddActorSystem("TestOne");
+            services.AddActorSystem("AggregateTests");
             services.AddHostedService<ActorSystemClusterHostedService>();
             services.AddSingleton<IAggregateStore>(aggregateStore);
-            services.AddSingleton<IWorkflowStore>(workflowStore);
         });
 
         hostBuilder.ConfigureLogging(builder =>
@@ -57,12 +55,17 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Prepare_IsSavedToState()
     {
-        var workflowId = Guid.NewGuid().ToString();
+        var callerId = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
 
-        var response = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Prepare, aggregateId, stringToSave, true);
-        response.Success.ShouldBe(true);
+        var client = Cluster.GetTestAggregate(aggregateId);
+
+        var operation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+
+        var response = await client.PrepareTestAction(operation, CancellationToken.None);
+
+        response!.Success.ShouldBe(true);
 
         var aggregateState = await GetAggregateStateAsync(aggregateId);
         aggregateState.ShouldNotBeNull();
@@ -73,28 +76,36 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Prepare_WhenSentWithPreviousSequence_ShouldReturnSavedResponse()
     {
-        var workflowId = Guid.NewGuid().ToString();
+        var callerId = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId);
 
-        var responseOne = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Prepare, aggregateId, stringToSave, true);
-        var responseTwo = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Prepare, aggregateId, stringToSave, true);
+        var operation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+
+        var responseOne = await client.PrepareTestAction(operation, CancellationToken.None);
+        var responseTwo = await client.PrepareTestAction(operation, CancellationToken.None);
 
         responseTwo.ShouldBeEquivalentTo(responseOne);
     }
 
     [Fact]
-    public async Task PrepareThenConfirm_ShouldSetName()
+    public async Task PrepareThenConfirm_ShouldSetString()
     {
-        var workflowId = Guid.NewGuid().ToString();
+        var callerId = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId);
 
-        var prepareResponse = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Prepare, aggregateId, stringToSave, true);
-        prepareResponse.Success.ShouldBe(true);
+        var prepareOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
 
-        var confirmResponse = await RequestTestActionAsync(workflowId, 2, OPERATION_TYPE.Confirm, aggregateId, stringToSave, true);
-        confirmResponse.Success.ShouldBe(true);
+        var prepareResponse = await client.PrepareTestAction(prepareOperation, CancellationToken.None);
+        prepareResponse!.Success.ShouldBe(true);
+
+        var confirmOperation = GenerateTestActionOperation(callerId, 2, true, stringToSave);
+
+        var confirmResponse = await client.ConfirmTestAction(confirmOperation, CancellationToken.None);
+        confirmResponse!.Success.ShouldBe(true);
 
         var aggregateState = await GetAggregateStateAsync(aggregateId);
         aggregateState.ShouldNotBeNull();
@@ -105,13 +116,23 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task PrepareThenConfirm_WhenSentWithPreviousSequence_ShouldReturnSavedResponse()
     {
-        var workflowId = Guid.NewGuid().ToString();
+        var callerId = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId);
 
-        var prepareResponse = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Prepare, aggregateId, stringToSave, true);
-        var confirmResponseOne = await RequestTestActionAsync(workflowId, 2, OPERATION_TYPE.Confirm, aggregateId, stringToSave, true);
-        var confirmResponseTwo = await RequestTestActionAsync(workflowId, 2, OPERATION_TYPE.Confirm, aggregateId, stringToSave, true);
+        var prepareOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+
+        var prepareResponse = await client.PrepareTestAction(prepareOperation, CancellationToken.None);
+        prepareResponse!.Success.ShouldBe(true);
+
+        var confirmOperation = GenerateTestActionOperation(callerId, 2, true, stringToSave);
+
+        var confirmResponseOne = await client.ConfirmTestAction(confirmOperation, CancellationToken.None);
+        confirmResponseOne!.Success.ShouldBe(true);
+
+        var confirmResponseTwo = await client.ConfirmTestAction(confirmOperation, CancellationToken.None);
+        confirmResponseTwo!.Success.ShouldBe(true);
 
         confirmResponseTwo.ShouldBeEquivalentTo(confirmResponseOne);
     }
@@ -119,27 +140,35 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Confirm_WhenNotPrepared_ReturnsError()
     {
-        var workflowId = Guid.NewGuid().ToString();
+        var callerId = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId);
 
-        var confirmResponse = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Confirm, aggregateId, stringToSave, true);
-        confirmResponse.Success.ShouldBe(false);
+        var confirmOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+
+        var confirmResponse = await client.ConfirmTestAction(confirmOperation, CancellationToken.None);
+        confirmResponse!.Success.ShouldBe(false);
     }
 
     [Fact]
-    public async Task PrepareThenConfirm_WhenWorkflowIdsAreDifferent_ShouldReturnError()
+    public async Task PrepareThenConfirm_WhenCallerIdsAreDifferent_ShouldReturnError()
     {
-        var workflowIdOne = Guid.NewGuid().ToString();
-        var workflowIdTwo = Guid.NewGuid().ToString();
+        var callerIdOne = Guid.NewGuid().ToString();
+        var callerIdTwo = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId);
 
-        var prepareResponse = await RequestTestActionAsync(workflowIdOne, 1, OPERATION_TYPE.Prepare, aggregateId, stringToSave, true);
-        prepareResponse.Success.ShouldBe(true);
+        var prepareOperation = GenerateTestActionOperation(callerIdOne, 1, true, stringToSave);
 
-        var confirmResponse = await RequestTestActionAsync(workflowIdTwo, 2, OPERATION_TYPE.Confirm, aggregateId, stringToSave, true);
-        confirmResponse.Success.ShouldBe(false);
+        var prepareResponse = await client.PrepareTestAction(prepareOperation, CancellationToken.None);
+        prepareResponse!.Success.ShouldBe(true);
+
+        var confirmOperation = GenerateTestActionOperation(callerIdTwo, 2, true, stringToSave);
+
+        var confirmResponse = await client.ConfirmTestAction(confirmOperation, CancellationToken.None);
+        confirmResponse!.Success.ShouldBe(false);
 
         var aggregateState = await GetAggregateStateAsync(aggregateId);
         aggregateState.ShouldNotBeNull();
@@ -150,26 +179,35 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Cancel_WhenNotPrepared_ReturnsError()
     {
-        var workflowId = Guid.NewGuid().ToString();
+        var callerId = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId);
 
-        var confirmResponse = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Cancel, aggregateId, stringToSave, true);
-        confirmResponse.Success.ShouldBe(false);
+        var confirmOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+
+        var confirmResponse = await client.ConfirmTestAction(confirmOperation, CancellationToken.None);
+
+        confirmResponse!.Success.ShouldBe(false);
     }
 
     [Fact]
-    public async Task PrepareThenCancel_ShouldNotSetName()
+    public async Task PrepareThenCancel_ShouldNotSetString()
     {
-        var workflowId = Guid.NewGuid().ToString();
+        var callerId = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId);
 
-        var prepareResponse = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Prepare, aggregateId, stringToSave, true);
-        prepareResponse.Success.ShouldBe(true);
+        var prepareOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
 
-        var confirmResponse = await RequestTestActionAsync(workflowId, 2, OPERATION_TYPE.Cancel, aggregateId, stringToSave, true);
-        confirmResponse.Success.ShouldBe(true);
+        var prepareResponse = await client.PrepareTestAction(prepareOperation, CancellationToken.None);
+        prepareResponse!.Success.ShouldBe(true);
+
+        var cancelOperation = GenerateTestActionOperation(callerId, 2, true, stringToSave);
+
+        var cancelResponse = await client.CancelTestAction(cancelOperation, CancellationToken.None);
+        cancelResponse!.Success.ShouldBe(true);
 
         var aggregateState = await GetAggregateStateAsync(aggregateId);
         aggregateState.ShouldNotBeNull();
@@ -178,18 +216,23 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     }
 
     [Fact]
-    public async Task PrepareThenCancel_WhenWorkflowIdsAreDifferent_ShouldReturnError()
+    public async Task PrepareThenCancel_WhenCallerIdsAreDifferent_ShouldReturnError()
     {
-        var workflowIdOne = Guid.NewGuid().ToString();
-        var workflowIdTwo = Guid.NewGuid().ToString();
+        var callerIdOne = Guid.NewGuid().ToString();
+        var callerIdTwo = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId);
 
-        var prepareResponse = await RequestTestActionAsync(workflowIdOne, 1, OPERATION_TYPE.Prepare, aggregateId, stringToSave, true);
-        prepareResponse.Success.ShouldBe(true);
+        var prepareOperation = GenerateTestActionOperation(callerIdOne, 1, true, stringToSave);
 
-        var confirmResponse = await RequestTestActionAsync(workflowIdTwo, 2, OPERATION_TYPE.Cancel, aggregateId, stringToSave, true);
-        confirmResponse.Success.ShouldBe(false);
+        var prepareResponse = await client.PrepareTestAction(prepareOperation, CancellationToken.None);
+        prepareResponse!.Success.ShouldBe(true);
+
+        var cancelOperation = GenerateTestActionOperation(callerIdTwo, 2, true, stringToSave);
+
+        var cancelResponse = await client.CancelTestAction(cancelOperation, CancellationToken.None);
+        cancelResponse!.Success.ShouldBe(false);
 
         var aggregateState = await GetAggregateStateAsync(aggregateId);
         aggregateState.ShouldNotBeNull();
@@ -200,13 +243,25 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task PrepareThenCancel_WhenSentWithPreviousSequence_ShouldReturnSavedResponse()
     {
-        var workflowId = Guid.NewGuid().ToString();
+        var callerId = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId);
 
-        var prepareResponse = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Prepare, aggregateId, stringToSave, true);
-        var cancelResponseOne = await RequestTestActionAsync(workflowId, 2, OPERATION_TYPE.Cancel, aggregateId, stringToSave, true);
-        var cancelResponseTwo = await RequestTestActionAsync(workflowId, 2, OPERATION_TYPE.Cancel, aggregateId, stringToSave, true);
+        var prepareOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+
+        var prepareResponse = await client.PrepareTestAction(prepareOperation, CancellationToken.None);
+        prepareResponse!.Success.ShouldBe(true);
+
+        var cancelOperation = GenerateTestActionOperation(callerId, 2, true, stringToSave);
+
+        var cancelResponseOne = await client.CancelTestAction(cancelOperation, CancellationToken.None);
+        cancelResponseOne!.Success.ShouldBe(true);
+
+        var cancelResponseTwo = await client.CancelTestAction(cancelOperation, CancellationToken.None);
+        cancelResponseTwo!.Success.ShouldBe(true);
+
+        cancelResponseTwo.ShouldBeEquivalentTo(cancelResponseOne);
 
         cancelResponseTwo.ShouldBeEquivalentTo(cancelResponseOne);
     }
@@ -214,12 +269,15 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Execute_ShouldSetName()
     {
-        var workflowId = Guid.NewGuid().ToString();
+        var callerId = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId);
 
-        var executeResponse = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Execute, aggregateId, stringToSave, true);
-        executeResponse.Success.ShouldBe(true);
+        var operation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+
+        var response = await client.ExecuteTestAction(operation, CancellationToken.None);
+        response!.Success.ShouldBe(true);
 
         var aggregateState = await GetAggregateStateAsync(aggregateId);
         aggregateState.ShouldNotBeNull();
@@ -230,56 +288,45 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Execute_WhenSentWithPreviousSequence_ShouldReturnSavedResponse()
     {
-        var workflowId = Guid.NewGuid().ToString();
+        var callerId = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId);
 
-        var executeResponseOne = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Execute, aggregateId, stringToSave, true);
-        var executeResponseTwo = await RequestTestActionAsync(workflowId, 1, OPERATION_TYPE.Execute, aggregateId, stringToSave, true);
+        var operation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
 
-        executeResponseTwo.ShouldBeEquivalentTo(executeResponseOne);
+        var responseOne = await client.ExecuteTestAction(operation, CancellationToken.None);
+        responseOne!.Success.ShouldBe(true);
+
+        var responseTwo = await client.ExecuteTestAction(operation, CancellationToken.None);
+        responseTwo!.Success.ShouldBe(true);
+
+        responseTwo.ShouldBeEquivalentTo(responseOne);
     }
 
-    private async Task<OperationResponse> RequestTestActionAsync(
-        string workflowId,
-        long sequence,
-        OPERATION_TYPE operationType,
-        string testAggregateId,
-        string stringToSave,
-        bool resultToReturn
-    )
+    private Operation GenerateTestActionOperation(string callerId, long sequence, bool resultToReturn, string stringToSave)
     {
-        var setName = new TestAction
+        var testAction = new TestActionRequest
         {
-            StringToSave = stringToSave,
-            ResultToReturn = resultToReturn
+            ResultToReturn = resultToReturn,
+            StringToSave = stringToSave
         };
 
         var operation = new Operation
         {
-            WorkflowId = workflowId,
+            CallerId = callerId,
             Sequence = sequence,
-            OperationType = operationType,
-            Action = Any.Pack(setName)
+            Action = Any.Pack(testAction)
         };
 
-        var response = await Cluster.RequestAsync<OperationResponse>(
-            identity: testAggregateId,
-            kind: TestAggregate.AggregateKind,
-            message: operation,
-            ct: CancellationToken.None
-        );
-
-        response.ShouldBeOfType<OperationResponse>();
-
-        return response;
+        return operation;
     }
 
     private async Task<TestAggregateState?> GetAggregateStateAsync(string testAggregateId)
     {
-        var key = $"{TestAggregate.AggregateKind}/{testAggregateId}";
+        var key = $"{TestAggregateActor.Kind}/{testAggregateId}";
 
-        var aggregateStateWrapper = await KeyValueStateStore.GetAsync(key);
+        var aggregateStateWrapper = await AggregateStore.GetAsync(key);
 
         if (aggregateStateWrapper == null)
         {

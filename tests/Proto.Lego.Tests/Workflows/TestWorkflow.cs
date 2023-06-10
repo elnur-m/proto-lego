@@ -1,55 +1,47 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Proto.Cluster;
+using Proto.Lego.CodeGen.Tests.Workflows;
 using Proto.Lego.Persistence;
 using Proto.Lego.Tests.Aggregates;
+using Proto.Lego.Workflow;
 
 namespace Proto.Lego.Tests.Workflows;
 
-public class TestWorkflow : Workflow<TestWorkflowInput>
+public class TestWorkflow : TestWorkflowBase
 {
-    public const string WorkflowKind = "TestWorkflow";
+    protected override TimeSpan ClearAfter { get; } = TimeSpan.FromMilliseconds(100);
 
-    public TestWorkflow(IWorkflowStore store, ILogger<Workflow<TestWorkflowInput>> logger) : base(store, logger)
+    public TestWorkflow(IContext context, ClusterIdentity clusterIdentity, IWorkflowStore store)
+        : base(context, clusterIdentity, store)
     {
-        Kind = WorkflowKind;
     }
 
-    protected override async Task ExecuteWorkflowAsync(TestWorkflowInput input)
+    public override async Task<WorkflowResult> ExecuteAsync(TestWorkflowInput input)
     {
-        var testActionOne = new TestAction
+        var testAction = new TestActionRequest
         {
-            StringToSave = input.StringToSave,
-            ResultToReturn = input.ResultToReturnOne
+            ResultToReturn = true,
+            StringToSave = input.StringToSave
         };
 
-        var testActionTwo = new TestAction
+        await Cluster
+            .GetTestAggregate(input.AggregateOneId)
+            .PrepareTestAction(GetNextOperation(TestAggregateActor.Kind, input.AggregateOneId, testAction), CancellationToken.None);
+
+        await Cluster
+            .GetTestAggregate(input.AggregateTwoId)
+            .PrepareTestAction(GetNextOperation(TestAggregateActor.Kind, input.AggregateTwoId, testAction), CancellationToken.None);
+
+        await Cluster
+            .GetTestAggregate(input.AggregateOneId)
+            .ConfirmTestAction(GetNextOperation(TestAggregateActor.Kind, input.AggregateOneId, testAction), CancellationToken.None);
+
+        await Cluster
+            .GetTestAggregate(input.AggregateTwoId)
+            .ConfirmTestAction(GetNextOperation(TestAggregateActor.Kind, input.AggregateTwoId, testAction), CancellationToken.None);
+
+        return new WorkflowResult
         {
-            StringToSave = input.StringToSave,
-            ResultToReturn = input.ResultToReturnTwo
+            Succeeded = true
         };
-
-        var prepareOneTask = PrepareAsync(TestAggregate.AggregateKind, input.AggregateOneId, testActionOne);
-        var prepareTwoTask = PrepareAsync(TestAggregate.AggregateKind, input.AggregateTwoId, testActionTwo);
-
-        var prepareResults = await Task.WhenAll(prepareOneTask, prepareTwoTask);
-
-        if (prepareResults.All(x => x.Success))
-        {
-            var confirmOneTask = ConfirmAsync(TestAggregate.AggregateKind, input.AggregateOneId, testActionOne);
-            var confirmTwoTask = ConfirmAsync(TestAggregate.AggregateKind, input.AggregateTwoId, testActionTwo);
-
-            await Task.WhenAll(confirmOneTask, confirmTwoTask);
-        }
-        else
-        {
-            var cancelOneTask = CancelAsync(TestAggregate.AggregateKind, input.AggregateOneId, testActionOne);
-            var cancelTwoTask = CancelAsync(TestAggregate.AggregateKind, input.AggregateTwoId, testActionTwo);
-
-            await Task.WhenAll(cancelOneTask, cancelTwoTask);
-        }
-    }
-
-    protected override async Task BeforeCleanUpAsync()
-    {
-        await Task.Delay(3000);
     }
 }

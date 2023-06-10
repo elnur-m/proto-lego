@@ -10,4 +10,18 @@
 		<ProjectReference Include="..\Proto.Lego\Proto.Lego.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Content Include="aggregate_template.txt">
+			<Pack>true</Pack>
+			<PackagePath>\Templates</PackagePath>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="workflow_template.txt">
+			<Pack>true</Pack>
+			<PackagePath>\Templates</PackagePath>
+		</Content>
+	</ItemGroup>
+
 </Project>

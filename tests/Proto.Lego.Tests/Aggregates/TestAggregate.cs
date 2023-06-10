@@ -1,102 +1,71 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Microsoft.Extensions.Logging;
+﻿using Proto.Cluster;
 using Proto.Lego.Aggregate;
 using Proto.Lego.Persistence;
 
 namespace Proto.Lego.Tests.Aggregates;
 
-public class TestAggregate : Aggregate<TestAggregateState>
+public class TestAggregate : TestAggregateBase
 {
-    public const string AggregateKind = nameof(TestAggregate);
+    private readonly IAggregateStore _store;
 
-    public TestAggregate(IAggregateStore store, ILogger<Aggregate<TestAggregateState>> logger) : base(store, logger)
+    public TestAggregate(IContext context, ClusterIdentity clusterIdentity, IAggregateStore store) : base(context, clusterIdentity)
     {
-        Kind = AggregateKind;
+        _store = store;
     }
 
-    protected override OperationResponse Prepare(Any action)
+    protected override async Task RecoverStateAsync()
     {
-        if (action.Is(TestAction.Descriptor))
+        var stateWrapper = await _store.GetAsync(PersistenceId);
+        if (stateWrapper != null)
         {
-            return PrepareTestAction(action.Unpack<TestAction>());
+            StateWrapper = stateWrapper;
         }
-
-        return new OperationResponse
-        {
-            Success = false,
-            ErrorMessage = "Unknown action"
-        };
     }
 
-    protected override OperationResponse Confirm(Any action)
+    protected override async Task PersistStateAsync()
     {
-        if (action.Is(TestAction.Descriptor))
-        {
-            return ConfirmTestAction(action.Unpack<TestAction>());
-        }
-
-        return new OperationResponse
-        {
-            Success = false,
-            ErrorMessage = "Unknown action"
-        };
+        await _store.SetAsync(PersistenceId, StateWrapper);
     }
 
-    protected override OperationResponse Cancel(Any action)
+    public override Task<OperationResponse> PrepareTestAction(TestActionRequest request)
     {
-        if (action.Is(TestAction.Descriptor))
+        State.OperationsPerformed++;
+
+        return Task.FromResult(new OperationResponse
         {
-            return CancelTestAction(action.Unpack<TestAction>());
-        }
+            Success = request.ResultToReturn
+        });
+    }
 
-        return new OperationResponse
+    public override Task<OperationResponse> ConfirmTestAction(TestActionRequest request)
+    {
+        State.OperationsPerformed++;
+        State.SavedString = request.StringToSave;
+
+        return Task.FromResult(new OperationResponse
         {
-            Success = false,
-            ErrorMessage = "Unknown action"
-        };
+            Success = request.ResultToReturn
+        });
     }
 
-    protected override OperationResponse Execute(Any action)
+    public override Task<OperationResponse> CancelTestAction(TestActionRequest request)
     {
-        if (action.Is(TestAction.Descriptor))
+        State.OperationsPerformed++;
+
+        return Task.FromResult(new OperationResponse
         {
-            return ExecuteTestAction(action.Unpack<TestAction>());
-        }
+            Success = request.ResultToReturn
+        });
+    }
 
-        return new OperationResponse
+    public override Task<OperationResponse> ExecuteTestAction(TestActionRequest request)
+    {
+        State.OperationsPerformed++;
+        State.SavedString = request.StringToSave;
+
+        return Task.FromResult(new OperationResponse
         {
-            Success = false,
-            ErrorMessage = "Unknown action"
-        };
-    }
-
-    private OperationResponse PrepareTestAction(TestAction testAction)
-    {
-        InnerState.OperationsPerformed++;
-
-        return new OperationResponse { Success = testAction.ResultToReturn };
-    }
-
-    private OperationResponse ConfirmTestAction(TestAction testAction)
-    {
-        InnerState.SavedString = testAction.StringToSave;
-        InnerState.OperationsPerformed++;
-
-        return new OperationResponse { Success = testAction.ResultToReturn };
-    }
-
-    private OperationResponse CancelTestAction(TestAction testAction)
-    {
-        InnerState.OperationsPerformed++;
-
-        return new OperationResponse { Success = true };
-    }
-
-    private OperationResponse ExecuteTestAction(TestAction testAction)
-    {
-        InnerState.SavedString = testAction.StringToSave;
-        InnerState.OperationsPerformed++;
-
-        return new OperationResponse { Success = testAction.ResultToReturn };
+            Success = request.ResultToReturn
+        });
     }
 }

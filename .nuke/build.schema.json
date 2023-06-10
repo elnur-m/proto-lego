@@ -78,6 +78,7 @@
             "enum": [
               "BuildProjects",
               "Clean",
+              "PackCodeGen",
               "PackInMemoryPersistence",
               "PackLego",
               "PackNpgsqlPersistence",
@@ -95,6 +96,7 @@
             "enum": [
               "BuildProjects",
               "Clean",
+              "PackCodeGen",
               "PackInMemoryPersistence",
               "PackLego",
               "PackNpgsqlPersistence",
