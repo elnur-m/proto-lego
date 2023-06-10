@@ -6,8 +6,8 @@ using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Proto;
 using Proto.Cluster;
-using Proto.Lego.AggregateGrain;
-using Proto.Lego.WorkflowGrain;
+using Proto.Lego.Aggregate;
+using Proto.Lego.Workflow;
 using Proto.Lego.Persistence;
 
 namespace {{CsNamespace}}
@@ -28,16 +28,16 @@ namespace {{CsNamespace}}
         protected ActorSystem System => Context.System;
         protected Proto.Cluster.Cluster Cluster => Context.System.Cluster();
         protected Proto.Cluster.ClusterIdentity ClusterIdentity;
-        protected readonly IWorkflowGrainStore WorkflowStore;
+        protected readonly IWorkflowStore WorkflowStore;
         protected string Id => ClusterIdentity.Identity;
         protected string PersistenceId => $"{ClusterIdentity.Kind}/{Id}";
         protected string Key => PersistenceId;
         protected abstract TimeSpan ClearAfter { get; }
 
-        protected WorkflowGrainState? State;
+        protected WorkflowState? State;
         private readonly Dictionary<string, long> _sequences = new();
 
-        protected {{Name}}Base(IContext context, ClusterIdentity clusterIdentity, IWorkflowGrainStore store)
+        protected {{Name}}Base(IContext context, ClusterIdentity clusterIdentity, IWorkflowStore store)
         {
             Context = context;
             ClusterIdentity = clusterIdentity;
@@ -61,7 +61,7 @@ namespace {{CsNamespace}}
             {
                 if (State == null)
                 {
-                    State = new WorkflowGrainState
+                    State = new WorkflowState
                     {
                         Input = Any.Pack(input),
                         Result = new WorkflowResult()

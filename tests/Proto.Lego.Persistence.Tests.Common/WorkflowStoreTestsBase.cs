@@ -83,9 +83,9 @@ public abstract class WorkflowStoreTestsBase
         var success = Random.Shared.Next() % 2 == 0;
         if (success)
         {
+            state.Completed = true;
             state.Result = new WorkflowResult
             {
-                Completed = true,
                 Succeeded = true
             };
         }
@@ -93,9 +93,9 @@ public abstract class WorkflowStoreTestsBase
         {
             var errors = Random.Shared.Next(1, 10);
 
+            state.Completed = true;
             state.Result = new WorkflowResult
             {
-                Completed = true,
                 Succeeded = false,
                 ErrorMessages = { Enumerable.Range(1, errors).Select(_ => Guid.NewGuid().ToString()) }
             };

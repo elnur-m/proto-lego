@@ -82,6 +82,19 @@ internal class Build : NukeBuild
             );
         });
 
+    private Target PackCodeGen => _ => _
+        .DependsOn(BuildProjects)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNetPack(_ => _
+                .SetProject(RootDirectory / "src" / "Proto.Lego.CodeGen")
+                .SetNoRestore(true)
+                .SetNoBuild(true)
+                .SetVersion(Version)
+                .SetOutputDirectory(PackagesDirectory)
+            );
+        });
+
     private Target PackInMemoryPersistence => _ => _
         .DependsOn(RunInMemoryPersistenceTests)
         .Executes(() =>
@@ -111,6 +124,7 @@ internal class Build : NukeBuild
     private Target PublishPackages => _ => _
         .OnlyWhenStatic(() => IsServerBuild)
         .DependsOn(PackLego)
+        .DependsOn(PackCodeGen)
         .DependsOn(PackInMemoryPersistence)
         .DependsOn(PackNpgsqlPersistence)
         .Requires(() => NuGetApiKey)

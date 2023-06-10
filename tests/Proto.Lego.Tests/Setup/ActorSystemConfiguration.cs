@@ -4,6 +4,7 @@ using Proto.Cluster.Partition;
 using Proto.Cluster.Testing;
 using Proto.DependencyInjection;
 using Proto.Lego.Aggregate;
+using Proto.Lego.CodeGen.Tests.Workflows;
 using Proto.Lego.Tests.Aggregates;
 using Proto.Lego.Tests.Workflows;
 using Proto.Lego.Workflow;
@@ -29,6 +30,8 @@ public static class ActorSystemConfiguration
                     .BindToLocalhost()
                     .WithProtoMessages(AggregateReflection.Descriptor)
                     .WithProtoMessages(WorkflowReflection.Descriptor)
+                    .WithProtoMessages(TestAggregateReflection.Descriptor)
+                    .WithProtoMessages(TestWorkflowReflection.Descriptor)
                 ;
 
             // cluster configuration
@@ -39,14 +42,16 @@ public static class ActorSystemConfiguration
                         clusterProvider: new TestProvider(new TestProviderOptions(), new InMemAgent()),
                         identityLookup: new PartitionIdentityLookup()
                     )
-                .WithClusterKind(
-                    kind: TestAggregate.AggregateKind,
-                    Props.FromProducer(() => ActivatorUtilities.CreateInstance<TestAggregate>(provider))
-                )
-                .WithClusterKind(
-                    kind: TestWorkflow.WorkflowKind,
-                    Props.FromProducer(() => ActivatorUtilities.CreateInstance<TestWorkflow>(provider))
-                )
+                    .WithClusterKind(
+                        kind: TestAggregateActor.Kind,
+                        Props.FromProducer(() => new TestAggregateActor((context, identity) =>
+                            ActivatorUtilities.CreateInstance<TestAggregate>(provider, context, identity)))
+                    )
+                    .WithClusterKind(
+                        kind: TestWorkflowActor.Kind,
+                        Props.FromProducer(() => new TestWorkflowActor((context, identity) =>
+                            ActivatorUtilities.CreateInstance<TestWorkflow>(provider, context, identity)))
+                    )
                 ;
 
             // create the actor system

@@ -4,26 +4,18 @@ option csharp_namespace = "Proto.Lego.Workflow";
 
 import "google/protobuf/any.proto";
 
-message Trigger {
-
-}
-
-message GetCurrentState {
-
-}
-
-message GetStateWhenCompleted {
-
-}
-
 message WorkflowState {
-	WorkflowResult result = 1;
-	repeated string aggregates_to_clean_up = 2;
-	google.protobuf.Any input = 3;
+	bool completed = 1;
+	WorkflowResult result = 2;
+	repeated string aggregates_to_clean_up = 3;
+	google.protobuf.Any input = 4;
 }
 
 message WorkflowResult {
-	bool completed = 1;
-	bool succeeded = 2;
-	repeated string error_messages = 3;
+	bool succeeded = 1;
+	repeated string error_messages = 2;
+}
+
+message Trigger {
+
 }

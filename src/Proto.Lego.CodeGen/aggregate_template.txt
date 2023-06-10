@@ -6,7 +6,7 @@ using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Proto;
 using Proto.Cluster;
-using Proto.Lego.AggregateGrain;
+using Proto.Lego.Aggregate;
 
 namespace {{CsNamespace}}
 {
@@ -30,8 +30,8 @@ namespace {{CsNamespace}}
         protected string Id => ClusterIdentity.Identity;
         protected string PersistenceId => $"{ClusterIdentity.Kind}/{Id}";
 
-        private AggregateGrainStateWrapper _stateWrapper;
-        protected AggregateGrainStateWrapper StateWrapper
+        private AggregateStateWrapper _stateWrapper;
+        protected AggregateStateWrapper StateWrapper
         {
             get => _stateWrapper;
             set
@@ -48,7 +48,7 @@ namespace {{CsNamespace}}
             ClusterIdentity = clusterIdentity;
 
             State = new {{Name}}State();
-            _stateWrapper = new AggregateGrainStateWrapper
+            _stateWrapper = new AggregateStateWrapper
             {
                 InnerState = Any.Pack(State)
             };
