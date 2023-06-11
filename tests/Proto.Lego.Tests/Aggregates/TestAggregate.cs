@@ -31,10 +31,7 @@ public class TestAggregate : TestAggregateBase
     {
         State.OperationsPerformed++;
 
-        return Task.FromResult(new OperationResponse
-        {
-            Success = request.ResultToReturn
-        });
+        return TaskResult(request.ResultToReturn);
     }
 
     public override Task<OperationResponse> ConfirmTestAction(TestActionRequest request)
@@ -42,20 +39,14 @@ public class TestAggregate : TestAggregateBase
         State.OperationsPerformed++;
         State.SavedString = request.StringToSave;
 
-        return Task.FromResult(new OperationResponse
-        {
-            Success = request.ResultToReturn
-        });
+        return TaskResult(request.ResultToReturn);
     }
 
     public override Task<OperationResponse> CancelTestAction(TestActionRequest request)
     {
         State.OperationsPerformed++;
 
-        return Task.FromResult(new OperationResponse
-        {
-            Success = request.ResultToReturn
-        });
+        return TaskResult(request.ResultToReturn);
     }
 
     public override Task<OperationResponse> ExecuteTestAction(TestActionRequest request)
@@ -63,9 +54,6 @@ public class TestAggregate : TestAggregateBase
         State.OperationsPerformed++;
         State.SavedString = request.StringToSave;
 
-        return Task.FromResult(new OperationResponse
-        {
-            Success = request.ResultToReturn
-        });
+        return TaskResult(request.ResultToReturn);
     }
 }
