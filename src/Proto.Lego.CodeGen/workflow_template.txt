@@ -75,7 +75,7 @@ namespace {{CsNamespace}}
                     return;
                 }
 
-                var result = await ExecuteAsync(input);
+                var result = await ExecuteAsync(State.Input.Unpack<{{Name}}Input>());
 
                 State.Result = result;
                 State.Completed = true;
