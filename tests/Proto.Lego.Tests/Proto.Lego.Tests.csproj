@@ -41,8 +41,8 @@
 	<ItemGroup>
 		<Protobuf Include="Protos/test_aggregate.proto" GrpcServices="None" AdditionalImportDirs=".;" />
 		<Protobuf Include="Protos/test_workflow.proto" GrpcServices="None" AdditionalImportDirs=".;" />
-		<ProtoGrain Include="Protos/test_aggregate.proto" GrpcServices="None" TemplateFiles="../../src/Proto.Lego.CodeGen/aggregate_template.txt" AdditionalImportDirs=".;" />
-		<ProtoGrain Include="Protos/test_workflow.proto" GrpcServices="None" TemplateFiles="../../src/Proto.Lego.CodeGen/workflow_template.txt" AdditionalImportDirs=".;" />
+		<ProtoGrain Include="Protos/test_aggregate.proto" GrpcServices="None" TemplateFiles="../../src/Proto.Lego/Templates/1.0.0-alpha.11/aggregate_template.txt" AdditionalImportDirs=".;" />
+		<ProtoGrain Include="Protos/test_workflow.proto" GrpcServices="None" TemplateFiles="../../src/Proto.Lego/Templates/1.0.0-alpha.11/workflow_template.txt" AdditionalImportDirs=".;" />
 	</ItemGroup>
 
 </Project>

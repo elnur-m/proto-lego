@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego", "src\Proto.Leg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.Tests", "tests\Proto.Lego.Tests\Proto.Lego.Tests.csproj", "{D2865F77-D562-4190-85BA-F30625654758}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proto.Lego.CodeGen", "src\Proto.Lego.CodeGen\Proto.Lego.CodeGen.csproj", "{1EEF876B-C40A-4647-BA29-3DA553736558}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +51,6 @@ Global
 		{D2865F77-D562-4190-85BA-F30625654758}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2865F77-D562-4190-85BA-F30625654758}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2865F77-D562-4190-85BA-F30625654758}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1EEF876B-C40A-4647-BA29-3DA553736558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1EEF876B-C40A-4647-BA29-3DA553736558}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1EEF876B-C40A-4647-BA29-3DA553736558}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1EEF876B-C40A-4647-BA29-3DA553736558}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
