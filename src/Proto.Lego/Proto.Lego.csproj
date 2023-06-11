@@ -20,6 +20,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Templates\1.0.0-alpha.12\aggregate_template.txt" />
+	  <None Remove="Templates\1.0.0-alpha.12\workflow_template.txt" />
 	  <None Remove="Templates\aggregate_template.txt" />
 	  <None Remove="Templates\workflow_template.txt" />
 	</ItemGroup>
@@ -31,6 +33,16 @@
 	    <Pack>true</Pack>
 	  </Content>
 	  <Content Include="Templates\1.0.0-alpha.11\workflow_template.txt">
+	    <PackagePath>contentFiles</PackagePath>
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	    <Pack>true</Pack>
+	  </Content>
+	  <Content Include="Templates\1.0.0-alpha.12\aggregate_template.txt">
+	    <PackagePath>contentFiles</PackagePath>
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	    <Pack>true</Pack>
+	  </Content>
+	  <Content Include="Templates\1.0.0-alpha.12\workflow_template.txt">
 	    <PackagePath>contentFiles</PackagePath>
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	    <Pack>true</Pack>
