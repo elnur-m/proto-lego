@@ -13,14 +13,14 @@
 	<ItemGroup>
 		<Content Include="aggregate_template.txt">
 			<Pack>true</Pack>
-			<PackagePath>\ProtoLego\Templates</PackagePath>
+			<PackagePath>contentFiles\ProtoLego\Templates</PackagePath>
 		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="workflow_template.txt">
 			<Pack>true</Pack>
-			<PackagePath>\ProtoLego\Templates</PackagePath>
+			<PackagePath>contentFiles\ProtoLego\Templates</PackagePath>
 		</Content>
 	</ItemGroup>
 
