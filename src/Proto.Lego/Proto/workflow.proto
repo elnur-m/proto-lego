@@ -15,6 +15,11 @@ message WorkflowResult {
 	repeated string error_messages = 2;
 }
 
+message WorkflowResponse {
+	google.protobuf.Any input = 1;
+	WorkflowResult result = 2;
+}
+
 message Trigger {
 
 }

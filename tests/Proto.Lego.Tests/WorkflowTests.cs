@@ -68,9 +68,11 @@ public class WorkflowTests : IAsyncDisposable, IClassFixture<InMemoryAggregateSt
             StringToSave = Guid.NewGuid().ToString()
         };
 
-        var result = await Cluster
+        var workflowResponse = await Cluster
             .GetTestWorkflow(workflowId)
             .ExecuteAsync(input, CancellationToken.None);
+
+        workflowResponse!.Input.ShouldBeEquivalentTo(input);
 
         await Task.Delay(10);
 
@@ -108,15 +110,15 @@ public class WorkflowTests : IAsyncDisposable, IClassFixture<InMemoryAggregateSt
 
         await WorkflowStore.SetAsync(persistenceId, state);
 
-        var result = await Cluster
-            .RequestAsync<WorkflowResult>(
+        var response = await Cluster
+            .RequestAsync<WorkflowResponse>(
                 kind: TestWorkflowActor.Kind,
                 identity: workflowId,
                 message: new Trigger(),
                 ct: CancellationToken.None
             );
 
-        result.ShouldNotBeNull();
+        response.ShouldNotBeNull();
     }
 
     private async Task<AggregateStateWrapper?> GetAggregateStateWrapperAsync(string testAggregateId)
