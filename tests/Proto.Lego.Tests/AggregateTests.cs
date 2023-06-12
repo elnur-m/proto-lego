@@ -55,12 +55,12 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Prepare_WhenSequenceIsTooAhead_ReturnsError()
     {
-        var callerId = Guid.NewGuid().ToString();
+        var caller = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
-        var client = Cluster.GetTestAggregate(aggregateId);
+        var client = Cluster.GetTestAggregate(aggregateId, caller);
 
-        var operation = GenerateTestActionOperation(callerId, 2, true, stringToSave);
+        var operation = GenerateTestActionOperation(caller, 2, true, stringToSave);
         var response = await client.PrepareTestAction(operation, CancellationToken.None);
         response!.Success.ShouldBe(false);
     }
@@ -68,12 +68,12 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Prepare_WhenThereIsSavedResponse_ReturnsSavedResponse()
     {
-        var callerId = Guid.NewGuid().ToString();
+        var caller = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
-        var client = Cluster.GetTestAggregate(aggregateId);
+        var client = Cluster.GetTestAggregate(aggregateId, caller);
 
-        var operation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+        var operation = GenerateTestActionOperation(caller, 1, true, stringToSave);
         var responseOne = await client.PrepareTestAction(operation, CancellationToken.None);
         responseOne!.Success.ShouldBe(true);
 
@@ -84,16 +84,16 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Confirm_WhenSequenceIsTooAhead_ReturnsError()
     {
-        var callerId = Guid.NewGuid().ToString();
+        var caller = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
-        var client = Cluster.GetTestAggregate(aggregateId);
+        var client = Cluster.GetTestAggregate(aggregateId, caller);
 
-        var prepareOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+        var prepareOperation = GenerateTestActionOperation(caller, 1, true, stringToSave);
         var prepareResponse = await client.PrepareTestAction(prepareOperation, CancellationToken.None);
         prepareResponse!.Success.ShouldBe(true);
 
-        var confirmOperation = GenerateTestActionOperation(callerId, 3, true, stringToSave);
+        var confirmOperation = GenerateTestActionOperation(caller, 3, true, stringToSave);
         var confirmResponse = await client.ConfirmTestAction(confirmOperation, CancellationToken.None);
         confirmResponse!.Success.ShouldBe(false);
     }
@@ -101,16 +101,16 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Confirm_WhenThereIsSavedResponse_ReturnsSavedResponse()
     {
-        var callerId = Guid.NewGuid().ToString();
+        var caller = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
-        var client = Cluster.GetTestAggregate(aggregateId);
+        var client = Cluster.GetTestAggregate(aggregateId, caller);
 
-        var prepareOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+        var prepareOperation = GenerateTestActionOperation(caller, 1, true, stringToSave);
         var prepareResponse = await client.PrepareTestAction(prepareOperation, CancellationToken.None);
         prepareResponse!.Success.ShouldBe(true);
 
-        var confirmOperation = GenerateTestActionOperation(callerId, 2, true, stringToSave);
+        var confirmOperation = GenerateTestActionOperation(caller, 2, true, stringToSave);
         var confirmResponseOne = await client.ConfirmTestAction(confirmOperation, CancellationToken.None);
         confirmResponseOne!.Success.ShouldBe(true);
 
@@ -121,12 +121,12 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Confirm_WhenActionWasNotPrepared_ReturnsError()
     {
-        var callerId = Guid.NewGuid().ToString();
+        var caller = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
-        var client = Cluster.GetTestAggregate(aggregateId);
+        var client = Cluster.GetTestAggregate(aggregateId, caller);
 
-        var confirmOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+        var confirmOperation = GenerateTestActionOperation(caller, 1, true, stringToSave);
         var confirmResponse = await client.ConfirmTestAction(confirmOperation, CancellationToken.None);
         confirmResponse!.Success.ShouldBe(false);
     }
@@ -134,16 +134,16 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Cancel_WhenSequenceIsTooAhead_ReturnsError()
     {
-        var callerId = Guid.NewGuid().ToString();
+        var caller = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
-        var client = Cluster.GetTestAggregate(aggregateId);
+        var client = Cluster.GetTestAggregate(aggregateId, caller);
 
-        var prepareOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+        var prepareOperation = GenerateTestActionOperation(caller, 1, true, stringToSave);
         var prepareResponse = await client.PrepareTestAction(prepareOperation, CancellationToken.None);
         prepareResponse!.Success.ShouldBe(true);
 
-        var cancelOperation = GenerateTestActionOperation(callerId, 3, true, stringToSave);
+        var cancelOperation = GenerateTestActionOperation(caller, 3, true, stringToSave);
         var cancelResponse = await client.CancelTestAction(cancelOperation, CancellationToken.None);
         cancelResponse!.Success.ShouldBe(false);
     }
@@ -151,16 +151,16 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Cancel_WhenThereIsSavedResponse_ReturnsSavedResponse()
     {
-        var callerId = Guid.NewGuid().ToString();
+        var caller = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
-        var client = Cluster.GetTestAggregate(aggregateId);
+        var client = Cluster.GetTestAggregate(aggregateId, caller);
 
-        var prepareOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+        var prepareOperation = GenerateTestActionOperation(caller, 1, true, stringToSave);
         var prepareResponse = await client.PrepareTestAction(prepareOperation, CancellationToken.None);
         prepareResponse!.Success.ShouldBe(true);
 
-        var cancelOperation = GenerateTestActionOperation(callerId, 2, true, stringToSave);
+        var cancelOperation = GenerateTestActionOperation(caller, 2, true, stringToSave);
         var cancelResponseOne = await client.CancelTestAction(cancelOperation, CancellationToken.None);
         cancelResponseOne!.Success.ShouldBe(true);
 
@@ -171,12 +171,12 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Cancel_WhenActionWasNotPrepared_ReturnsError()
     {
-        var callerId = Guid.NewGuid().ToString();
+        var caller = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
-        var client = Cluster.GetTestAggregate(aggregateId);
+        var client = Cluster.GetTestAggregate(aggregateId, caller);
 
-        var cancelOperation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+        var cancelOperation = GenerateTestActionOperation(caller, 1, true, stringToSave);
         var cancelResponse = await client.ConfirmTestAction(cancelOperation, CancellationToken.None);
         cancelResponse!.Success.ShouldBe(false);
     }
@@ -184,12 +184,12 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Execute_WhenSequenceIsTooAhead_ReturnsError()
     {
-        var callerId = Guid.NewGuid().ToString();
+        var caller = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
-        var client = Cluster.GetTestAggregate(aggregateId);
+        var client = Cluster.GetTestAggregate(aggregateId, caller);
 
-        var operation = GenerateTestActionOperation(callerId, 2, true, stringToSave);
+        var operation = GenerateTestActionOperation(caller, 2, true, stringToSave);
         var response = await client.ExecuteTestAction(operation, CancellationToken.None);
         response!.Success.ShouldBe(false);
     }
@@ -197,12 +197,12 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
     [Fact]
     public async Task Execute_WhenThereIsSavedResponse_ReturnsSavedResponse()
     {
-        var callerId = Guid.NewGuid().ToString();
+        var caller = Guid.NewGuid().ToString();
         var aggregateId = Guid.NewGuid().ToString();
         var stringToSave = Guid.NewGuid().ToString();
-        var client = Cluster.GetTestAggregate(aggregateId);
+        var client = Cluster.GetTestAggregate(aggregateId, caller);
 
-        var operation = GenerateTestActionOperation(callerId, 1, true, stringToSave);
+        var operation = GenerateTestActionOperation(caller, 1, true, stringToSave);
         var responseOne = await client.ExecuteTestAction(operation, CancellationToken.None);
         responseOne!.Success.ShouldBe(true);
 
@@ -210,7 +210,7 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
         responseTwo!.ShouldBeEquivalentTo(responseOne);
     }
 
-    private Operation GenerateTestActionOperation(string callerId, long sequence, bool resultToReturn, string stringToSave)
+    private Operation GenerateTestActionOperation(string caller, long sequence, bool resultToReturn, string stringToSave)
     {
         var testAction = new TestActionRequest
         {
@@ -220,7 +220,7 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
 
         var operation = new Operation
         {
-            CallerId = callerId,
+            Caller = caller,
             Sequence = sequence,
             Action = Any.Pack(testAction)
         };

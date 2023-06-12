@@ -23,21 +23,14 @@ public class TestWorkflow : TestWorkflowBase
             StringToSave = input.StringToSave
         };
 
-        await Cluster
-            .GetTestAggregate(input.AggregateOneId)
-            .PrepareTestAction(GetNextOperation(TestAggregateActor.Kind, input.AggregateOneId, testAction), CancellationToken.None);
+        var aggregateOneClient = GetClient<TestAggregateClient>(input.AggregateOneId);
+        var aggregateTwoClient = GetClient<TestAggregateClient>(input.AggregateTwoId);
 
-        await Cluster
-            .GetTestAggregate(input.AggregateTwoId)
-            .PrepareTestAction(GetNextOperation(TestAggregateActor.Kind, input.AggregateTwoId, testAction), CancellationToken.None);
+        await aggregateOneClient.PrepareTestAction(testAction, CancellationToken.None);
+        await aggregateTwoClient.PrepareTestAction(testAction, CancellationToken.None);
 
-        await Cluster
-            .GetTestAggregate(input.AggregateOneId)
-            .ConfirmTestAction(GetNextOperation(TestAggregateActor.Kind, input.AggregateOneId, testAction), CancellationToken.None);
-
-        await Cluster
-            .GetTestAggregate(input.AggregateTwoId)
-            .ConfirmTestAction(GetNextOperation(TestAggregateActor.Kind, input.AggregateTwoId, testAction), CancellationToken.None);
+        await aggregateOneClient.ConfirmTestAction(testAction, CancellationToken.None);
+        await aggregateTwoClient.ConfirmTestAction(testAction, CancellationToken.None);
 
         return new WorkflowResult
         {

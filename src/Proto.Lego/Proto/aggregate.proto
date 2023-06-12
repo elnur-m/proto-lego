@@ -5,7 +5,7 @@ option csharp_namespace = "Proto.Lego.Aggregate";
 import "google/protobuf/any.proto";
 
 message Operation {
-	string caller_id = 1;
+	string caller = 1;
 	int64 sequence = 2;
 	google.protobuf.Any action = 3;
 }
@@ -16,7 +16,7 @@ message OperationResponse {
 }
 
 message WipeCallerState {
-	string caller_id = 1;
+	string caller = 1;
 }
 
 //State

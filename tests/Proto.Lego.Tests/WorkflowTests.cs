@@ -15,8 +15,7 @@ using Xunit.Abstractions;
 
 namespace Proto.Lego.Tests;
 
-public class WorkflowTests : IAsyncDisposable, IClassFixture<InMemoryAggregateStore>,
-    IClassFixture<InMemoryWorkflowStore>
+public class WorkflowTests : IAsyncDisposable, IClassFixture<InMemoryAggregateStore>, IClassFixture<InMemoryWorkflowStore>
 {
     private readonly IHost _host;
 
@@ -34,7 +33,7 @@ public class WorkflowTests : IAsyncDisposable, IClassFixture<InMemoryAggregateSt
 
         hostBuilder.ConfigureServices(services =>
         {
-            services.AddActorSystem("AggregateTests");
+            services.AddActorSystem("WorkflowTests");
             services.AddHostedService<ActorSystemClusterHostedService>();
             services.AddSingleton<IAggregateStore>(aggregateStore);
             services.AddSingleton<IWorkflowStore>(workflowStore);
