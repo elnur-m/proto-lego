@@ -462,7 +462,7 @@ namespace {{CsNamespace}}
                 Action = Any.Pack(request)
             };
 
-            var gr = new GrainRequestMessage({{Index}} * 4 + 1, operation);
+            var gr = new GrainRequestMessage({{Index}} * 4 + 2, operation);
             //request the RPC method to be invoked
             var res = await _cluster.RequestAsync<object>(_id, {{../Name}}Actor.Kind, gr, ct);
             _sequence++;
@@ -512,7 +512,7 @@ namespace {{CsNamespace}}
                 Action = Any.Pack(request)
             };
 
-            var gr = new GrainRequestMessage({{Index}} * 4 + 1, operation);
+            var gr = new GrainRequestMessage({{Index}} * 4 + 3, operation);
             //request the RPC method to be invoked
             var res = await _cluster.RequestAsync<object>(_id, {{../Name}}Actor.Kind, gr, ct);
             _sequence++;
@@ -562,7 +562,7 @@ namespace {{CsNamespace}}
                 Action = Any.Pack(request)
             };
 
-            var gr = new GrainRequestMessage({{Index}} * 4 + 1, operation);
+            var gr = new GrainRequestMessage({{Index}} * 4 + 4, operation);
             //request the RPC method to be invoked
             var res = await _cluster.RequestAsync<object>(_id, {{../Name}}Actor.Kind, gr, ct);
             _sequence++;
