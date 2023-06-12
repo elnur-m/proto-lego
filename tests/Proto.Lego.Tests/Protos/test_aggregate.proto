@@ -17,5 +17,4 @@ message TestAggregateState {
 
 service TestAggregate {
 	rpc TestAction (TestActionRequest) returns (google.protobuf.Empty);
-	rpc TestAction2 (TestActionRequest) returns (google.protobuf.Empty);
 }

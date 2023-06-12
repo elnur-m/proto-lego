@@ -1,0 +1,724 @@
+﻿#nullable enable
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
+using Proto;
+using Proto.Cluster;
+using Proto.Lego.Aggregate;
+
+namespace {{CsNamespace}}
+{
+    public static partial class GrainExtensions
+    {
+        {{#each Services}}
+        public static {{Name}}Client Get{{Name}}(this Proto.Cluster.Cluster cluster, string identity, string caller) => new {{Name}}Client(cluster, identity, caller);
+
+        public static {{Name}}Client Get{{Name}}(this IContext context, string identity, string caller) => new {{Name}}Client(context.System.Cluster(), identity, caller);
+        {{/each}}
+    }
+
+	{{#each Services}}
+
+    public abstract class {{Name}}Base
+    {
+        protected IContext Context {get;}
+        protected ActorSystem System => Context.System;
+        protected Proto.Cluster.Cluster Cluster => Context.System.Cluster();
+        protected Proto.Cluster.ClusterIdentity ClusterIdentity;
+        protected string Id => ClusterIdentity.Identity;
+        protected string PersistenceId => $"{ClusterIdentity.Kind}/{Id}";
+
+        private AggregateStateWrapper _stateWrapper;
+        protected AggregateStateWrapper StateWrapper
+        {
+            get => _stateWrapper;
+            set
+            {
+                _stateWrapper = value;
+                State = value.InnerState.Unpack<{{Name}}State>();
+            }
+        }
+        protected {{Name}}State State;
+    
+        protected {{Name}}Base(IContext context, ClusterIdentity clusterIdentity)
+        {
+            Context = context;
+            ClusterIdentity = clusterIdentity;
+
+            State = new {{Name}}State();
+            _stateWrapper = new AggregateStateWrapper
+            {
+                InnerState = Any.Pack(State)
+            };
+            StateWrapper = _stateWrapper;
+        }
+        
+        public virtual async Task OnStarted()
+        {
+            await RecoverStateAsync();
+        }
+        public virtual Task OnStopping() => Task.CompletedTask;
+        public virtual Task OnStopped() => Task.CompletedTask;
+        public virtual Task OnReceive() => Task.CompletedTask;
+
+        protected abstract Task RecoverStateAsync();
+        protected abstract Task PersistStateAsync();
+
+        public virtual async Task WipeCallerState(WipeCallerState request, Action respond, Action<string> onError)
+        {
+            try
+            {
+                if (StateWrapper.CallerStates.ContainsKey(request.Caller))
+                {
+                    StateWrapper.CallerStates.Remove(request.Caller);
+                    await PersistStateAsync();
+                }
+
+                respond();
+            }
+            catch (Exception x)
+            {
+                onError(x.ToString());
+            }
+        }
+
+        {{#each Methods}}
+        public virtual async Task Prepare{{Name}}(Operation operation, Action<OperationResponse> respond, Action<string> onError)
+        {
+            try
+            {
+                var action = operation.Action;
+                var request = action.Unpack<{{InputName}}>();
+                var callerState = GetOrCreateCallerState(operation.Caller);
+
+                if (operation.Sequence - callerState.Sequence > 1)
+                {
+                    respond(new OperationResponse
+                    {
+                        ErrorMessage = "Invalid sequence"
+                    });
+                    return;
+                }
+
+                var savedResponse = GetSavedResponse(operation.Caller, operation.Sequence);
+                if (savedResponse != null)
+                {
+                    respond(savedResponse);
+                    return;
+                }
+
+                var res = await Prepare{{Name}}({{Parameter}});
+
+                if (res.Success)
+                {
+                    callerState.PreparedActions.Add(action);
+                }
+
+                callerState.Sequence++;
+                callerState.Responses.Add(operation.Sequence, res);
+
+                StateWrapper.InnerState = Any.Pack(State);
+                await PersistStateAsync();
+
+                respond(res);
+            }
+            catch (Exception x)
+            {
+                onError(x.ToString());
+            }
+        }
+
+        public virtual async Task Confirm{{Name}}(Operation operation, Action<OperationResponse> respond, Action<string> onError)
+        {
+            try
+            {
+                var action = operation.Action;
+                var request = action.Unpack<{{InputName}}>();
+                var callerState = GetOrCreateCallerState(operation.Caller);
+
+                if (operation.Sequence - callerState.Sequence > 1)
+                {
+                    respond(new OperationResponse
+                    {
+                        ErrorMessage = "Invalid sequence"
+                    });
+                    return;
+                }
+
+                var savedResponse = GetSavedResponse(operation.Caller, operation.Sequence);
+                if (savedResponse != null)
+                {
+                    respond(savedResponse);
+                    return;
+                }
+
+                var preparedAction = callerState.PreparedActions.FirstOrDefault(x => x.Equals(action));
+
+                if (preparedAction == null)
+                {
+                    respond(new OperationResponse
+                    {
+                        Success = false,
+                        ErrorMessage = "This action was not prepared"
+                    });
+                }
+
+                var res = await Confirm{{Name}}({{Parameter}});
+
+                callerState.PreparedActions.Remove(action);
+                callerState.Sequence++;
+                callerState.Responses.Add(operation.Sequence, res);
+
+                StateWrapper.InnerState = Any.Pack(State);
+                await PersistStateAsync();
+
+                respond(res);
+            }
+            catch (Exception x)
+            {
+                onError(x.ToString());
+            }
+        }
+
+        public virtual async Task Cancel{{Name}}(Operation operation, Action<OperationResponse> respond, Action<string> onError)
+        {
+            try
+            {
+                var action = operation.Action;
+                var request = action.Unpack<{{InputName}}>();
+                var callerState = GetOrCreateCallerState(operation.Caller);
+
+                if (operation.Sequence - callerState.Sequence > 1)
+                {
+                    respond(new OperationResponse
+                    {
+                        ErrorMessage = "Invalid sequence"
+                    });
+                    return;
+                }
+
+                var savedResponse = GetSavedResponse(operation.Caller, operation.Sequence);
+                if (savedResponse != null)
+                {
+                    respond(savedResponse);
+                    return;
+                }
+
+                var preparedAction = callerState.PreparedActions.FirstOrDefault(x => x.Equals(action));
+
+                if (preparedAction == null)
+                {
+                    respond(new OperationResponse
+                    {
+                        Success = false,
+                        ErrorMessage = "This action was not prepared"
+                    });
+                }
+
+                var res = await Cancel{{Name}}({{Parameter}});
+
+                callerState.PreparedActions.Remove(action);
+                callerState.Sequence++;
+                callerState.Responses.Add(operation.Sequence, res);
+
+                StateWrapper.InnerState = Any.Pack(State);
+                await PersistStateAsync();
+
+                respond(res);
+            }
+            catch (Exception x)
+            {
+                onError(x.ToString());
+            }
+        }
+
+        public virtual async Task Execute{{Name}}(Operation operation, Action<OperationResponse> respond, Action<string> onError)
+        {
+            try
+            {
+                var request = operation.Action.Unpack<{{InputName}}>();
+                var callerState = GetOrCreateCallerState(operation.Caller);
+
+                if (operation.Sequence - callerState.Sequence > 1)
+                {
+                    respond(new OperationResponse
+                    {
+                        ErrorMessage = "Invalid sequence"
+                    });
+                    return;
+                }
+
+                var savedResponse = GetSavedResponse(operation.Caller, operation.Sequence);
+                if (savedResponse != null)
+                {
+                    respond(savedResponse);
+                    return;
+                }
+                var res = await Execute{{Name}}({{Parameter}});
+
+                callerState.Sequence++;
+                callerState.Responses.Add(operation.Sequence, res);
+
+                StateWrapper.InnerState = Any.Pack(State);
+                await PersistStateAsync();
+
+                respond(res);
+            }
+            catch (Exception x)
+            {
+                onError(x.ToString());
+            }
+        }
+        {{/each}}
+        
+        protected Task<OperationResponse> TaskResult(bool success)
+        {
+            return Task.FromResult<OperationResponse>(success);
+        }
+
+        protected Task<OperationResponse> TaskResult(string errorMessage)
+        {
+            return Task.FromResult<OperationResponse>(errorMessage);
+        }
+
+        private CallerCommunicationState GetOrCreateCallerState(string Caller)
+        {
+            if (!StateWrapper.CallerStates.ContainsKey(Caller))
+            {
+                StateWrapper.CallerStates.Add(Caller, new CallerCommunicationState());
+            }
+
+            return StateWrapper.CallerStates[Caller];
+        }
+
+        private OperationResponse? GetSavedResponse(string Caller, long sequence)
+        {
+            if (!StateWrapper.CallerStates.TryGetValue(Caller, out var callerState))
+            {
+                return null;
+            }
+
+            if (callerState.Sequence < sequence)
+            {
+                return null;
+            }
+
+            var savedResponse = callerState.Responses[sequence];
+            return savedResponse;
+        }
+
+		{{#each Methods}}        
+        public virtual Task<OperationResponse> Prepare{{Name}}({{SingleParameterDefinition}}) => 
+            Task.FromResult(new OperationResponse
+            {
+                ErrorMessage = "Unsupported action"
+            });
+        
+        public virtual Task<OperationResponse> Confirm{{Name}}({{SingleParameterDefinition}}) => 
+            Task.FromResult(new OperationResponse
+            {
+                ErrorMessage = "Unsupported action"
+            });
+        
+        public virtual Task<OperationResponse> Cancel{{Name}}({{SingleParameterDefinition}}) => 
+            Task.FromResult(new OperationResponse
+            {
+                ErrorMessage = "Unsupported action"
+            });
+        
+        public virtual Task<OperationResponse> Execute{{Name}}({{SingleParameterDefinition}}) => 
+            Task.FromResult(new OperationResponse
+            {
+                ErrorMessage = "Unsupported action"
+            });
+		{{/each}}
+    }
+
+    public class {{Name}}Client : IAggregateClient<{{Name}}Client>
+    {
+        private readonly string _id;
+        private readonly Proto.Cluster.Cluster _cluster;
+        private int _sequence = 1;
+        private readonly string _caller;
+
+        public {{Name}}Client(Proto.Cluster.Cluster cluster, string id, string caller)
+        {
+            _id = id;
+            _cluster = cluster;
+            _caller = caller;
+        }
+
+        public static {{Name}}Client Create(Cluster.Cluster cluster, string identity, string caller)
+        {
+            return new {{Name}}Client(cluster, identity, caller);
+        }
+
+        public async Task<Empty?> ClearAsync(CancellationToken ct)
+        {
+            _sequence = 1;
+            var request = new WipeCallerState
+            {
+                Caller = _caller
+            };
+            var gr = new GrainRequestMessage(0, request);
+            //request the RPC method to be invoked
+            var res = await _cluster.RequestAsync<object>(_id, {{Name}}Actor.Kind, gr, ct);
+        
+            return res switch
+            {
+                // normal response
+                Empty message => Nothing.Instance,
+                // enveloped response
+                GrainResponseMessage grainResponse => Nothing.Instance,
+                // error response
+                GrainErrorResponse grainErrorResponse => throw new Exception(grainErrorResponse.Err),
+                // timeout (when enabled by ClusterConfig.LegacyRequestTimeoutBehavior), othwerwise TimeoutException is thrown
+                null => null,
+                // unsupported response
+                _ => throw new NotSupportedException($"Unknown response type {res.GetType().FullName}")
+            };
+        }
+
+		{{#each Methods}}
+        public async Task<OperationResponse?> Prepare{{Name}}(Operation operation, CancellationToken ct)
+        {
+            var gr = new GrainRequestMessage({{Index}} * 4 + 1, operation);
+            //request the RPC method to be invoked
+            var res = await _cluster.RequestAsync<object>(_id, {{../Name}}Actor.Kind, gr, ct);
+
+            return res switch
+            {
+                // normal response
+                OperationResponse message => message,
+                // enveloped response
+                GrainResponseMessage grainResponse => (OperationResponse?)grainResponse.ResponseMessage,
+                // error response
+                GrainErrorResponse grainErrorResponse => throw new Exception(grainErrorResponse.Err),
+                // timeout (when enabled by ClusterConfig.LegacyRequestTimeoutBehavior), othwerwise TimeoutException is thrown
+                null => null,
+                // unsupported response
+                _ => throw new NotSupportedException($"Unknown response type {res.GetType().FullName}")
+            };
+        }
+
+        public async Task<OperationResponse?> Prepare{{Name}}({{SingleParameterDefinition}}, CancellationToken ct)
+        {
+            var operation = new Operation
+            {
+                Caller = _caller,
+                Sequence = _sequence,
+                Action = Any.Pack(request)
+            };
+
+            var gr = new GrainRequestMessage({{Index}} * 4 + 1, operation);
+            //request the RPC method to be invoked
+            var res = await _cluster.RequestAsync<object>(_id, {{../Name}}Actor.Kind, gr, ct);
+            _sequence++;
+
+            return res switch
+            {
+                // normal response
+                OperationResponse message => message,
+                // enveloped response
+                GrainResponseMessage grainResponse => (OperationResponse?)grainResponse.ResponseMessage,
+                // error response
+                GrainErrorResponse grainErrorResponse => throw new Exception(grainErrorResponse.Err),
+                // timeout (when enabled by ClusterConfig.LegacyRequestTimeoutBehavior), othwerwise TimeoutException is thrown
+                null => null,
+                // unsupported response
+                _ => throw new NotSupportedException($"Unknown response type {res.GetType().FullName}")
+            };
+        }
+
+        public async Task<OperationResponse?> Confirm{{Name}}(Operation operation, CancellationToken ct)
+        {
+            var gr = new GrainRequestMessage({{Index}} * 4 + 2, operation);
+            //request the RPC method to be invoked
+            var res = await _cluster.RequestAsync<object>(_id, {{../Name}}Actor.Kind, gr, ct);
+
+            return res switch
+            {
+                // normal response
+                OperationResponse message => message,
+                // enveloped response
+                GrainResponseMessage grainResponse => (OperationResponse?)grainResponse.ResponseMessage,
+                // error response
+                GrainErrorResponse grainErrorResponse => throw new Exception(grainErrorResponse.Err),
+                // timeout (when enabled by ClusterConfig.LegacyRequestTimeoutBehavior), othwerwise TimeoutException is thrown
+                null => null,
+                // unsupported response
+                _ => throw new NotSupportedException($"Unknown response type {res.GetType().FullName}")
+            };
+        }
+
+        public async Task<OperationResponse?> Confirm{{Name}}({{SingleParameterDefinition}}, CancellationToken ct)
+        {
+            var operation = new Operation
+            {
+                Caller = _caller,
+                Sequence = _sequence,
+                Action = Any.Pack(request)
+            };
+
+            var gr = new GrainRequestMessage({{Index}} * 4 + 1, operation);
+            //request the RPC method to be invoked
+            var res = await _cluster.RequestAsync<object>(_id, {{../Name}}Actor.Kind, gr, ct);
+            _sequence++;
+
+            return res switch
+            {
+                // normal response
+                OperationResponse message => message,
+                // enveloped response
+                GrainResponseMessage grainResponse => (OperationResponse?)grainResponse.ResponseMessage,
+                // error response
+                GrainErrorResponse grainErrorResponse => throw new Exception(grainErrorResponse.Err),
+                // timeout (when enabled by ClusterConfig.LegacyRequestTimeoutBehavior), othwerwise TimeoutException is thrown
+                null => null,
+                // unsupported response
+                _ => throw new NotSupportedException($"Unknown response type {res.GetType().FullName}")
+            };
+        }
+
+        public async Task<OperationResponse?> Cancel{{Name}}(Operation operation, CancellationToken ct)
+        {
+            var gr = new GrainRequestMessage({{Index}} * 4 + 3, operation);
+            //request the RPC method to be invoked
+            var res = await _cluster.RequestAsync<object>(_id, {{../Name}}Actor.Kind, gr, ct);
+
+            return res switch
+            {
+                // normal response
+                OperationResponse message => message,
+                // enveloped response
+                GrainResponseMessage grainResponse => (OperationResponse?)grainResponse.ResponseMessage,
+                // error response
+                GrainErrorResponse grainErrorResponse => throw new Exception(grainErrorResponse.Err),
+                // timeout (when enabled by ClusterConfig.LegacyRequestTimeoutBehavior), othwerwise TimeoutException is thrown
+                null => null,
+                // unsupported response
+                _ => throw new NotSupportedException($"Unknown response type {res.GetType().FullName}")
+            };
+        }
+
+        public async Task<OperationResponse?> Cancel{{Name}}({{SingleParameterDefinition}}, CancellationToken ct)
+        {
+            var operation = new Operation
+            {
+                Caller = _caller,
+                Sequence = _sequence,
+                Action = Any.Pack(request)
+            };
+
+            var gr = new GrainRequestMessage({{Index}} * 4 + 1, operation);
+            //request the RPC method to be invoked
+            var res = await _cluster.RequestAsync<object>(_id, {{../Name}}Actor.Kind, gr, ct);
+            _sequence++;
+
+            return res switch
+            {
+                // normal response
+                OperationResponse message => message,
+                // enveloped response
+                GrainResponseMessage grainResponse => (OperationResponse?)grainResponse.ResponseMessage,
+                // error response
+                GrainErrorResponse grainErrorResponse => throw new Exception(grainErrorResponse.Err),
+                // timeout (when enabled by ClusterConfig.LegacyRequestTimeoutBehavior), othwerwise TimeoutException is thrown
+                null => null,
+                // unsupported response
+                _ => throw new NotSupportedException($"Unknown response type {res.GetType().FullName}")
+            };
+        }
+
+        public async Task<OperationResponse?> Execute{{Name}}(Operation operation, CancellationToken ct)
+        {
+            var gr = new GrainRequestMessage({{Index}} * 4 + 4, operation);
+            //request the RPC method to be invoked
+            var res = await _cluster.RequestAsync<object>(_id, {{../Name}}Actor.Kind, gr, ct);
+
+            return res switch
+            {
+                // normal response
+                OperationResponse message => message,
+                // enveloped response
+                GrainResponseMessage grainResponse => (OperationResponse?)grainResponse.ResponseMessage,
+                // error response
+                GrainErrorResponse grainErrorResponse => throw new Exception(grainErrorResponse.Err),
+                // timeout (when enabled by ClusterConfig.LegacyRequestTimeoutBehavior), othwerwise TimeoutException is thrown
+                null => null,
+                // unsupported response
+                _ => throw new NotSupportedException($"Unknown response type {res.GetType().FullName}")
+            };
+        }
+
+        public async Task<OperationResponse?> Execute{{Name}}({{SingleParameterDefinition}}, CancellationToken ct)
+        {
+            var operation = new Operation
+            {
+                Caller = _caller,
+                Sequence = _sequence,
+                Action = Any.Pack(request)
+            };
+
+            var gr = new GrainRequestMessage({{Index}} * 4 + 1, operation);
+            //request the RPC method to be invoked
+            var res = await _cluster.RequestAsync<object>(_id, {{../Name}}Actor.Kind, gr, ct);
+            _sequence++;
+
+            return res switch
+            {
+                // normal response
+                OperationResponse message => message,
+                // enveloped response
+                GrainResponseMessage grainResponse => (OperationResponse?)grainResponse.ResponseMessage,
+                // error response
+                GrainErrorResponse grainErrorResponse => throw new Exception(grainErrorResponse.Err),
+                // timeout (when enabled by ClusterConfig.LegacyRequestTimeoutBehavior), othwerwise TimeoutException is thrown
+                null => null,
+                // unsupported response
+                _ => throw new NotSupportedException($"Unknown response type {res.GetType().FullName}")
+            };
+        }
+        {{/each}}
+    }
+
+    public class {{Name}}Actor : IActor
+    {
+        public const string Kind = "{{Name}}";
+
+        private {{Name}}Base? _inner;
+        private IContext? _context;
+        private readonly Func<IContext, ClusterIdentity, {{Name}}Base> _innerFactory;
+    
+        public {{Name}}Actor(Func<IContext, ClusterIdentity, {{Name}}Base> innerFactory)
+        {
+            _innerFactory = innerFactory;
+        }
+
+        public async Task ReceiveAsync(IContext context)
+        {
+            switch (context.Message)
+            {
+                case Started msg: 
+                {
+                    _context = context;
+                    var id = context.Get<ClusterIdentity>()!; // Always populated on startup
+                    _inner = _innerFactory(context, id);
+                    await _inner.OnStarted();
+                    break;
+                }
+                case Stopping _:
+                {
+                    await _inner!.OnStopping();
+                    break;
+                }
+                case Stopped _:
+                {
+                    await _inner!.OnStopped();
+                    break;
+                }
+                case WipeCallerState wipe:
+                    await _inner!.WipeCallerState(wipe, Respond, OnError);
+                    break;
+                case GrainRequestMessage(var methodIndex, var r):
+                {
+                    switch (methodIndex)
+                    {
+                        case 0:
+                        {   
+                            if(r is WipeCallerState input){
+                                await _inner!.WipeCallerState(input, Respond, OnError);
+                            } else {
+                                OnError($"Invalid client contract. Expected {{InputName}}, received {r?.GetType().FullName}");
+                            }
+
+                            break;
+                        }
+
+			            {{#each Methods}}
+                        case {{Index}}*4 + 1:
+                        {   
+                            {{#if UseParameter}}
+                            if(r is Operation input){
+                                await _inner!.Prepare{{Name}}(input, Respond, OnError);
+                            } else {
+                                OnError($"Invalid client contract. Expected {{InputName}}, received {r?.GetType().FullName}");
+                            }
+                            {{else}}
+                            await _inner!.{{Name}}(Respond, OnError);
+                            {{/if}}
+
+                            break;
+                        }
+
+                        case {{Index}}*4 + 2:
+                        {   
+                            {{#if UseParameter}}
+                            if(r is Operation input){
+                                await _inner!.Confirm{{Name}}(input, Respond, OnError);
+                            } else {
+                                OnError($"Invalid client contract. Expected {{InputName}}, received {r?.GetType().FullName}");
+                            }
+                            {{else}}
+                            await _inner!.{{Name}}(Respond, OnError);
+                            {{/if}}
+
+                            break;
+                        }
+
+                        case {{Index}}*4 + 3:
+                        {   
+                            {{#if UseParameter}}
+                            if(r is Operation input){
+                                await _inner!.Cancel{{Name}}(input, Respond, OnError);
+                            } else {
+                                OnError($"Invalid client contract. Expected {{InputName}}, received {r?.GetType().FullName}");
+                            }
+                            {{else}}
+                            await _inner!.{{Name}}(Respond, OnError);
+                            {{/if}}
+
+                            break;
+                        }
+
+                        case {{Index}}*4 + 4:
+                        {   
+                            {{#if UseParameter}}
+                            if(r is Operation input){
+                                await _inner!.Execute{{Name}}(input, Respond, OnError);
+                            } else {
+                                OnError($"Invalid client contract. Expected {{InputName}}, received {r?.GetType().FullName}");
+                            }
+                            {{else}}
+                            await _inner!.{{Name}}(Respond, OnError);
+                            {{/if}}
+
+                            break;
+                        }
+			            {{/each}}
+                        default:
+                            OnError($"Invalid client contract. Unexpected Index {methodIndex}");
+                            break;
+                    }
+
+                    break;
+                }
+                default:
+                {
+                    await _inner!.OnReceive();
+                    break;
+                }
+            }
+        }
+
+        private void Respond<T>(T response) where T: IMessage => _context!.Respond(response is not null ? response : new GrainResponseMessage(response));
+        private void Respond() => _context!.Respond( new GrainResponseMessage(null));
+        private void OnError(string error) => _context!.Respond( new GrainErrorResponse {Err = error } );
+
+        public static ClusterKind GetClusterKind(Func<IContext, ClusterIdentity, {{Name}}Base> innerFactory)
+            => new ClusterKind(Kind, Props.FromProducer(() => new {{Name}}Actor(innerFactory)));
+    }
+	{{/each}}	
+}
