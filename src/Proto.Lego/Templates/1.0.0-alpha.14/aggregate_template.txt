@@ -350,7 +350,7 @@ namespace {{CsNamespace}}
             _caller = caller;
         }
 
-        public static {{Name}}Client Create(Cluster.Cluster cluster, string identity, string caller)
+        public static {{Name}}Client Create(Proto.Cluster.Cluster cluster, string identity, string caller)
         {
             return new {{Name}}Client(cluster, identity, caller);
         }
