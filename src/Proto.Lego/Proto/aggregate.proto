@@ -13,10 +13,15 @@ message Operation {
 message OperationResponse {
 	bool success = 1;
 	string error_message = 2;
+	google.protobuf.Any payload = 3;
 }
 
 message WipeCallerState {
 	string caller = 1;
+}
+
+message GetState {
+
 }
 
 //State

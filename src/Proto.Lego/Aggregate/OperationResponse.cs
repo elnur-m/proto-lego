@@ -1,4 +1,6 @@
-﻿namespace Proto.Lego.Aggregate;
+﻿using Google.Protobuf;
+
+namespace Proto.Lego.Aggregate;
 
 public partial class OperationResponse
 {
@@ -15,4 +17,9 @@ public partial class OperationResponse
     public static implicit operator OperationResponse(bool success) => new(success);
 
     public static implicit operator OperationResponse(string errorMessage) => new(errorMessage);
+
+    public TPayload GetPayload<TPayload>() where TPayload : IMessage, new()
+    {
+        return Payload.Unpack<TPayload>();
+    }
 }

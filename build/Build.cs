@@ -31,7 +31,7 @@ internal class Build : NukeBuild
     [Parameter][Secret] private readonly string NuGetApiKey;
 
     private AbsolutePath PackagesDirectory => TemporaryDirectory / "packages";
-    private const string Version = "1.0.0-alpha.16";
+    private const string Version = "1.0.0-alpha.17";
 
     private Target Clean => _ => _
         .Executes(() =>

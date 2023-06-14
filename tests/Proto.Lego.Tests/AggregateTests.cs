@@ -210,6 +210,28 @@ public class AggregateTests : IAsyncDisposable, IClassFixture<InMemoryAggregateS
         responseTwo!.ShouldBeEquivalentTo(responseOne);
     }
 
+    [Fact]
+    public async Task GetState_ReturnsState()
+    {
+        var caller = Guid.NewGuid().ToString();
+        var aggregateId = Guid.NewGuid().ToString();
+        var stringToSave = Guid.NewGuid().ToString();
+        var client = Cluster.GetTestAggregate(aggregateId, caller);
+
+        var action = new TestActionRequest
+        {
+            ResultToReturn = true,
+            StringToSave = stringToSave
+        };
+
+        var responseOne = await client.ExecuteTestAction(action, CancellationToken.None);
+        responseOne!.Success.ShouldBe(true);
+
+        var getStateResponse = await client.GetStateAsync(CancellationToken.None);
+        getStateResponse!.Success.ShouldBe(true);
+        getStateResponse.GetPayload<TestAggregateState>().SavedString.ShouldBe(stringToSave);
+    }
+
     private Operation GenerateTestActionOperation(string caller, long sequence, bool resultToReturn, string stringToSave)
     {
         var testAction = new TestActionRequest

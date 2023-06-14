@@ -1,0 +1,261 @@
+﻿#nullable enable
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
+using Proto;
+using Proto.Cluster;
+using Proto.Lego.Aggregate;
+using Proto.Lego.Workflow;
+using Proto.Lego.Persistence;
+
+namespace {{CsNamespace}}
+{
+    public static partial class GrainExtensions
+    {
+        {{#each Services}}
+        public static {{Name}}Client Get{{Name}}(this Proto.Cluster.Cluster cluster, string identity) => new {{Name}}Client(cluster, identity);
+
+        public static {{Name}}Client Get{{Name}}(this IContext context, string identity) => new {{Name}}Client(context.System.Cluster(), identity);
+        {{/each}}
+    }
+
+	{{#each Services}}	
+    public abstract class {{Name}}Base
+    {
+        protected IContext Context {get;}
+        protected ActorSystem System => Context.System;
+        protected Proto.Cluster.Cluster Cluster => Context.System.Cluster();
+        protected Proto.Cluster.ClusterIdentity ClusterIdentity;
+        protected readonly IWorkflowStore WorkflowStore;
+        protected string Id => ClusterIdentity.Identity;
+        protected string PersistenceId => $"{ClusterIdentity.Kind}/{Id}";
+        protected string Key => PersistenceId;
+        protected abstract TimeSpan ClearAfter { get; }
+
+        public WorkflowState? State;
+        public List<IAggregateClient> Clients { get; set; } = new();
+
+        protected {{Name}}Base(IContext context, ClusterIdentity clusterIdentity, IWorkflowStore store)
+        {
+            Context = context;
+            ClusterIdentity = clusterIdentity;
+            WorkflowStore = store;
+        }
+        
+        public virtual async Task OnStarted()
+        {
+            await RecoverStateAsync();
+        }
+        public virtual Task OnStopping() => Task.CompletedTask;
+        public virtual Task OnStopped() => Task.CompletedTask;
+        public virtual Task OnReceive() => Task.CompletedTask;
+
+        public abstract Task<WorkflowResult> ExecuteAsync({{Name}}Input input);
+
+        public virtual async Task Execute({{Name}}Input input, Action<WorkflowResponse> respond, Action<string> onError)
+        {
+            Context.SetReceiveTimeout(ClearAfter);
+            try
+            {
+                if (State == null)
+                {
+                    State = new WorkflowState
+                    {
+                        Input = Any.Pack(input),
+                        Result = new WorkflowResult()
+                    };
+                    await PersistStateAsync();
+                }
+
+                if (State.Completed)
+                {
+                    respond(new WorkflowResponse 
+                    {
+                        Input = State.Input,
+                        Result = State.Result
+                    });
+                    return;
+                }
+
+                var result = await ExecuteAsync(State.Input.Unpack<{{Name}}Input>());    
+                respond(new WorkflowResponse 
+                    {
+                        Input = State.Input,
+                        Result = result
+                    });
+
+                await CleanUpAggregatesAsync();
+
+                State.Result = result;
+                State.Completed = true;
+                await PersistStateAsync();
+            }
+            catch (Exception x)
+            {
+                onError(x.ToString());
+            }
+        }
+
+        public virtual async Task ClearAsync()
+        {
+            await WorkflowStore.DeleteAsync(PersistenceId);
+            Context.Stop(Context.Self);
+        }
+
+        protected virtual async Task RecoverStateAsync()
+        {
+            State = await WorkflowStore.GetAsync(PersistenceId);
+        }
+
+        protected virtual async Task PersistStateAsync()
+        {
+            await WorkflowStore.SetAsync(PersistenceId, State!);
+        }
+
+        protected TClient GetClient<TClient>(string identity) where TClient : IAggregateClient<TClient>
+        {
+            var client = TClient.Create(Cluster, identity, Key);
+            Clients.Add(client);
+            return client;
+        }
+
+        protected virtual async Task CleanUpAggregatesAsync()
+        {
+            var tasks = Clients.Select(x=>x.ClearAsync(CancellationToken.None));
+            var results = await Task.WhenAll(tasks);
+
+            if(results.Any(x=> x == null))
+            {
+                throw new Exception("Some aggregates did not respond to WipeCallerState message");
+            }
+
+        }
+    }
+
+    public class {{Name}}Client
+    {
+        private readonly string _id;
+        private readonly Proto.Cluster.Cluster _cluster;
+
+        public {{Name}}Client(Proto.Cluster.Cluster cluster, string id)
+        {
+            _id = id;
+            _cluster = cluster;
+        }
+
+        public async Task<WorkflowClientResponse<{{Name}}Input>?> ExecuteAsync({{Name}}Input input, CancellationToken ct)
+        {
+            var gr = new GrainRequestMessage(0, input);
+            //request the RPC method to be invoked
+            var res = await _cluster.RequestAsync<object>(_id, {{Name}}Actor.Kind, gr, ct);
+
+            return res switch
+            {
+                // normal response
+                WorkflowResponse response => new WorkflowClientResponse<{{Name}}Input>(response.Input.Unpack<{{Name}}Input>(), response.Result),
+                // enveloped response
+                GrainResponseMessage grainResponse => grainResponse?.ResponseMessage == null
+                    ? null 
+                    : new WorkflowClientResponse<{{Name}}Input>(
+                        ((WorkflowResponse)grainResponse.ResponseMessage).Input.Unpack<{{Name}}Input>(),
+                        ((WorkflowResponse)grainResponse.ResponseMessage).Result),
+                // error response
+                GrainErrorResponse grainErrorResponse => throw new Exception(grainErrorResponse.Err),
+                // timeout (when enabled by ClusterConfig.LegacyRequestTimeoutBehavior), othwerwise TimeoutException is thrown
+                null => null,
+                // unsupported response
+                _ => throw new NotSupportedException($"Unknown response type {res.GetType().FullName}")
+            };
+        }
+    }
+
+    public class {{Name}}Actor : IActor
+    {
+        public const string Kind = "{{Name}}";
+
+        private {{Name}}Base? _inner;
+        private IContext? _context;
+        private readonly Func<IContext, ClusterIdentity, {{Name}}Base> _innerFactory;
+    
+        public {{Name}}Actor(Func<IContext, ClusterIdentity, {{Name}}Base> innerFactory)
+        {
+            _innerFactory = innerFactory;
+        }
+
+        public async Task ReceiveAsync(IContext context)
+        {
+            switch (context.Message)
+            {
+                case Started msg: 
+                {
+                    _context = context;
+                    var id = context.Get<ClusterIdentity>()!; // Always populated on startup
+                    _inner = _innerFactory(context, id);
+
+                    if(_inner.State != null)
+                    {
+                        await _inner!.Execute(_inner.State!.Input.Unpack<{{Name}}Input>(), Respond, OnError);
+                    }
+
+                    await _inner.OnStarted();
+                    break;
+                }
+                case Stopping _:
+                {
+                    await _inner!.OnStopping();
+                    break;
+                }
+                case Stopped _:
+                {
+                    await _inner!.OnStopped();
+                    break;
+                }
+                case ReceiveTimeout:
+                    await _inner!.ClearAsync();
+                    break;
+                case Trigger:
+                    if(_inner!.State != null)
+                    {
+                        await _inner.Execute(_inner.State!.Input.Unpack<{{Name}}Input>(), Respond, OnError);
+                    }
+                    break;
+                case GrainRequestMessage(var methodIndex, var r):
+                {
+                    switch (methodIndex)
+                    {
+                        case 0:
+                        {   
+                            if(r is {{Name}}Input input){
+                                await _inner!.Execute(input, Respond, OnError);
+                            } else {
+                                OnError($"Invalid client contract. Expected {{Name}}Input, received {r?.GetType().FullName}");
+                            }
+
+                            break;
+                        }
+                        default:
+                            OnError($"Invalid client contract. Unexpected Index {methodIndex}");
+                            break;
+                    }
+
+                    break;
+                }
+                default:
+                {
+                    await _inner!.OnReceive();
+                    break;
+                }
+            }
+        }
+
+        private void Respond<T>(T response) where T: IMessage => _context!.Respond(response is not null ? response : new GrainResponseMessage(response));
+        private void Respond() => _context!.Respond( new GrainResponseMessage(null));
+        private void OnError(string error) => _context!.Respond( new GrainErrorResponse {Err = error } );
+
+        public static ClusterKind GetClusterKind(Func<IContext, ClusterIdentity, {{Name}}Base> innerFactory)
+            => new ClusterKind(Kind, Props.FromProducer(() => new {{Name}}Actor(innerFactory)));
+    }
+	{{/each}}	
+}
